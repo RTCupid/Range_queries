@@ -16,11 +16,12 @@
 
 ## Content
 - [1. Installation and Build](#installation-and-build)
-- [2. Introduction](#introduction)
-- [3. Implementation of Red-Black Tree](#implementation-of-red-black-tree)
-- [4. Project structure](#project-structure)
-- [5. Requirements](#requirements)
-- [6. Project Creators](#project-creators)
+- [2. Task Range Queries](#task-range-queries)
+- [3. Introduction](#introduction)
+- [4. Implementation of Red-Black Tree](#implementation-of-red-black-tree)
+- [5. Project structure](#project-structure)
+- [6. Requirements](#requirements)
+- [7. Project Creators](#project-creators)
 
 ## Installation and Build:
 
