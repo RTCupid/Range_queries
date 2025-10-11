@@ -46,6 +46,16 @@ cmake --build .
 ./Range_queries
 ```
 
+## Task Range Queries
+
+- Range queries are convenient for using with data stored in a tree.
+- Let the input be keys (each key is an integer, all keys
+different) and queries (each query is a pair of two integers, the second
+greater than the first).
+- For each query, we need to count the number of keys in the tree such that all of them lie strictly between its left and right boundaries, inclusive.
+- Input: k 10 k 20 q 8 31 q 6 9 k 30 k 40 q 15 40.
+- Result: 2 0 3.
+
 ## Introduction
 Range queries are essential operations in modern computing, widely used in databases, financial systems, and data analytics. They help find records within specific value ranges, like customers with purchases between $100 and $500 or transactions within certain amounts for fraud detection. These systems require efficient handling of constantly changing data.
 
