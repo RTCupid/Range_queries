@@ -7,7 +7,7 @@
 
 </div>
 
-## Check [Contribution Guidelines](https://github.com/RTCupid/Differentiator/contribution_guidelines.md)
+## Check [Contribution Guidelines](contribution_guidelines.md)
 
 ## Other Languages
 
