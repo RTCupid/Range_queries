@@ -49,20 +49,20 @@ cmake --build .
 
 ## Task Range Queries
 
-- Range queries are convenient for using with data stored in a tree.
-- Let the input be keys (each key is an integer, all keys
-different) and queries (each query is a pair of two integers, the second
+- `Range queries` are convenient for using with data stored in a tree.
+- Let the input be `keys` (each `key` is an integer, all `keys`
+different) and `queries` (each `query` is a pair of two integers, the second
 greater than the first).
-- For each query, we need to count the number of keys in the tree such that all of them lie strictly between its left and right boundaries, inclusive.
+- For each `query`, we need to count the number of `keys` in the tree such that all of them lie strictly between its left and right boundaries, inclusive.
 - Input: k 10 k 20 q 8 31 q 6 9 k 30 k 40 q 15 40.
 - Result: 2 0 3.
 
 ## Introduction
-Range queries are essential operations in modern computing, widely used in databases, financial systems, and data analytics. They help find records within specific value ranges, like customers with purchases between $100 and $500 or transactions within certain amounts for fraud detection. These systems require efficient handling of constantly changing data.
+`Range queries` are essential operations in `modern computing`, widely used in `databases`, `financial systems`, and `data analytics`. They help find records within specific value ranges, like customers with purchases between $100 and $500 or transactions within certain amounts for fraud detection. These systems require efficient handling of constantly changing data.
 
 A simple solution stores keys in an array and checks each element during queries. However, this approach becomes very slow with large datasets, as processing time grows exponentially. This makes it unsuitable for real-time applications.
 
-A better solution uses Red-Black Trees - self-balancing binary search trees that maintain efficient operations through color rules and rotations. Each node can store subtree size, enabling range queries in logarithmic time instead of linear time. This provides significant performance improvements for large-scale systems.
+A better solution uses `Red-Black Trees` - self-balancing binary search trees that maintain efficient operations through color rules and rotations. Each node can store subtree size, enabling range queries in logarithmic time instead of linear time. This provides significant performance improvements for large-scale systems.
 
 ## Implementation of Red-Black Tree
 
