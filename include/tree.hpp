@@ -1,42 +1,37 @@
 #ifndef INCLUDE_TREE_HPP
 #define INCLUDE_TREE_HPP
 
+#include "node.hpp"
 #include <cstddef>
 #include <functional>
 #include <memory>
-#include "node.hpp"
 
 namespace RB_tree {
 
-template <typename Key_T, typename Compare = std::less<Key_T>>
-class Tree final {
-private:
+template <typename Key_T, typename Compare = std::less<Key_T>> class Tree final {
+  private:
     std::unique_ptr<Node<Key_T>> root_{nullptr};
     std::unique_ptr<Node<Key_T>> nil_{nullptr};
 
-public:
-    Tree() { 
+  public:
+    Tree() {
         init_nil();
         // TODO build tree
     }
     ~Tree() = default;
-    tree(const tree&) = delete;
-    tree& operator=(const tree&) = delete;
-    tree(tree&&) = default;
-    tree& operator=(tree&&) = default;        
+    tree(const tree &) = delete;
+    tree &operator=(const tree &) = delete;
+    tree(tree &&) = default;
+    tree &operator=(tree &&) = default;
 
-    
-    
-private:
+  private:
     void init_nil() {
         nil_ = std::make_unique<Node<Key_T>>(Key_T{});
         nil_->set_color(Color::black);
     }
 
-    [[nodiscard]] bool is_nil  (const Node<Key_T>* node) const noexcept { return node == nil_.get(); }
-    
+    [[nodiscard]] bool is_nil(const Node<Key_T> *node) const noexcept { return node == nil_.get(); }
 };
-
 
 } // namespace RB_tree
 
