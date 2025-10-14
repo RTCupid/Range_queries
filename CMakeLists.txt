@@ -9,15 +9,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(TEST_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
-file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_SOURCE_DIR}/src/main.cpp"
-)
-
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-add_custom_target(end_to_end
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/end_to_end/end_to_end.sh)
-
 enable_testing()
+add_subdirectory(tests)
