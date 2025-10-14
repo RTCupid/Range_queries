@@ -13,5 +13,9 @@ add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
+add_custom_target(unit
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/build/tests/unit/node/node
+)
+
 enable_testing()
 add_subdirectory(tests)

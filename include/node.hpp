@@ -7,14 +7,14 @@ namespace RB_tree {
 
 enum class Color { red, black};
 
-template<typename Key_T>
+template<typename KeyT>
 class Node {
 private:
-    std::unique_ptr<Node> parent_{nullptr};
+    Node* parent_{nullptr};
     std::unique_ptr<Node> left_{nullptr};
     std::unique_ptr<Node> right_{nullptr};
     Color color_{Color::red};
-    Key_T key_;
+    KeyT key_{0};
 
 public:
     Node() = default;
@@ -24,33 +24,33 @@ public:
     Node& operator=(Node&&) = default;
     ~Node() = default;
     
-    explicit Node(const Key_T& key, Color color = Color::red) : color_{color} , key_{key} {}
-    explicit Node(Key_T&& key, Color color = Color::red) : color_(color), key_(std::move(key)) {}
+    explicit Node(const KeyT& key, Color color = Color::red) : color_{color} , key_{key} {}
+    explicit Node(KeyT&& key, Color color = Color::red) : color_(color), key_(std::move(key)) {}
 
     [[nodiscard]] bool is_red  () const noexcept { return color_ == Color::red;   }
     [[nodiscard]] bool is_black() const noexcept { return color_ == Color::black; }
 
-    void set_left(std::unique_ptr<Node> node) noexcept { left_ = std::move(node); }
-    void set_right(std::unique_ptr<Node> node) noexcept { right_ = std::move(node); }
-    void set_parent(std::unique_ptr<Node> node) noexcept { parent_ = std::move(node); }
+    void set_left(std::unique_ptr<Node> node) noexcept { left_ = std::move(node); if (left_) left_->parent_ = this;}
+    void set_right(std::unique_ptr<Node> node) noexcept { right_ = std::move(node); if (right_) right_->parent_ = this;}
+    void set_parent(Node* node) noexcept { parent_ = node;}
 
-    [[nodiscard]] std::unique_ptr<Node> get_parent() noexcept { return std::move(parent_); }
-    [[nodiscard]] std::unique_ptr<Node> get_left()   noexcept { return std::move(left_); }
-    [[nodiscard]] std::unique_ptr<Node> get_right()  noexcept { return std::move(right_); }
+    [[nodiscard]] Node* get_parent_ptr() noexcept { return parent_; }
+    [[nodiscard]] Node* get_left_ptr()   noexcept { return left_.get(); }
+    [[nodiscard]] Node* get_right_ptr()  noexcept { return right_.get(); }
 
-    [[nodiscard]] Node* get_parent_ptr() const noexcept { return parent_.get(); }
-    [[nodiscard]] Node* get_left_ptr() const noexcept { return left_.get(); }
-    [[nodiscard]] Node* get_right_ptr() const noexcept { return right_.get(); }
+    [[nodiscard]] const Node* get_parent_ptr() const noexcept { return parent_; }
+    [[nodiscard]] const Node* get_left_ptr()   const noexcept { return left_.get(); }
+    [[nodiscard]] const Node* get_right_ptr()  const noexcept { return right_.get(); }
 
     void clear_left() noexcept { left_.reset(); }
     void clear_right() noexcept { right_.reset(); }
-    void clear_parent() noexcept { parent_.reset(); }
+    void clear_parent() noexcept { parent_ = nullptr; }
     
     [[nodiscard]] Color get_color() const noexcept { return color_; }
     void set_color(Color color) noexcept { color_ = color; }
 
-    [[nodiscard]] const Key_T& get_key() const noexcept { return key_; }
-    void set_key(const Key_T& key) noexcept { key_ = key; }
+    [[nodiscard]] const KeyT& get_key() const noexcept { return key_; }
+    void set_key(const KeyT& key) noexcept { key_ = key; }
 
 private:
 
