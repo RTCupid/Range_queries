@@ -9,53 +9,32 @@
 namespace RB_tree {
 
 template <typename Key_T, typename Compare = std::less<Key_T>>
-class tree final {
+class Tree final {
 private:
-    Node_base* root_{nullptr};
-    Node_base* nil_{nullptr};
-    std::size_t size{0};
-    Compare    comp_{};
+    std::unique_ptr<Node<Key_T>> root_{nullptr};
+    std::unique_ptr<Node<Key_T>> nil_{nullptr};
 
 public:
-    tree() { init_nil(); }
-    ~tree() {destroy_tree(); destroy_nil();}
+    Tree() { 
+        init_nil();
+        // TODO build tree
+    }
+    ~Tree() = default;
+    tree(const tree&) = delete;
+    tree& operator=(const tree&) = delete;
+    tree(tree&&) = default;
+    tree& operator=(tree&&) = default;        
 
+    
+    
 private:
     void init_nil() {
-        nil_ = new Node_base(Color::black);
-        nil_->set_parent(nil_); 
-        nil_->set_left  (nil_, nil_);
-        nil_->set_right (nil_, nil_);
-        root_ = nil_;
+        nil_ = std::make_unique<Node<Key_T>>(Key_T{});
+        nil_->set_color(Color::black);
     }
 
-    void destroy_nil() {
-        delete nil_;
-    }
-
-    Node* create_node(const Key& key) {
-        Node* node = new Node(key, Color::red);
-        return node;
-    }
-
-    void destroy_node(Node_base* node) noexcept {
-        delete node;
-    }
-
-    void destroy_tree() {
-        destroy_tree_recursively(root_);
-        root_ = nil_;
-        size_ = 0;
-    }
-
-    void destroy_tree_recursively(Node_base* node) {
-        if (node->is_nil()) return;
-
-        destroy_tree_recursively(node->get_left());
-        destroy_tree_recursively(node->get_right());
-
-        destroy_node(node);
-    }
+    [[nodiscard]] bool is_nil  (const Node<Key_T>* node) const noexcept { return node == nil_.get(); }
+    
 };
 
 

@@ -1,49 +1,60 @@
 #ifndef INCLUDE_NODE_HPP
 #define INCLUDE_NODE_HPP
 
+#include <memory>
+
 namespace RB_tree {
 
-enum class Color { red = 0, black = 1};
-
-class Node_base {
-protected:
-    Node_base* parent_{nullptr};
-    Node_base* left_{nullptr};
-    Node_base* right_{nullptr};
-    Color color_{Color::red};
-
-public:
-    Node_base() = default;
-    explicit Node_base(Color color) noexcept : color_{color} {}
-    virtual ~Node_base() = default;
-
-    Node_base*       get_parent()       noexcept { return parent_; }
-    const Node_base* get_parent() const noexcept { return parent_; }
-    Node_base*       get_left()         noexcept { return left_; }
-    const Node_base* get_left()   const noexcept { return left_; }
-    Node_base*       get_right()        noexcept { return right_; }
-    const Node_base* get_right()  const noexcept { return right_; }
-
-    Color get_color() const noexcept { return color_; }
-    void  set_color(Color color) noexcept { color_ = color; }
-
-    [[nodiscard]] bool is_red  () const noexcept { return color_ == Color::red;   }
-    [[nodiscard]] bool is_black() const noexcept { return color_ == Color::black; }
-    [[nodiscard]] bool is_nil  (const Node_base* node) const noexcept { return this == node; }
-
-    void set_left  (Node_base* node) noexcept { left_ = node; }
-    void set_right (Node_base* node) noexcept { right_ = node; }
-    void set_parent(Node_base* node) noexcept { parent_ = node; }
-};
+enum class Color { red, black};
 
 template<typename Key_T>
-class Node : public Node_base {
+class Node {
 private:
+    std::unique_ptr<Node> parent_{nullptr};
+    std::unique_ptr<Node> left_{nullptr};
+    std::unique_ptr<Node> right_{nullptr};
+    Color color_{Color::red};
     Key_T key_;
 
 public:
-    explicit Node(const Key_T& key, Color color = Color::red) : Node_base{color}, key_{key} {}
-    explicit Node(Key_T&& key, Color color = Color::red) : Node_base(color), key_(std::move(key)) {}
+    Node() = default;
+    Node(const Node&) = delete;
+    Node& operator=(const Node&) = delete;
+    Node(Node&&) = default;
+    Node& operator=(Node&&) = default;
+    ~Node() = default;
+    
+    explicit Node(const Key_T& key, Color color = Color::red) : color_{color} , key_{key} {}
+    explicit Node(Key_T&& key, Color color = Color::red) : color_(color), key_(std::move(key)) {}
+
+    [[nodiscard]] bool is_red  () const noexcept { return color_ == Color::red;   }
+    [[nodiscard]] bool is_black() const noexcept { return color_ == Color::black; }
+
+    void set_left(std::unique_ptr<Node> node) noexcept { left_ = std::move(node); }
+    void set_right(std::unique_ptr<Node> node) noexcept { right_ = std::move(node); }
+    void set_parent(std::unique_ptr<Node> node) noexcept { parent_ = std::move(node); }
+
+    [[nodiscard]] std::unique_ptr<Node> get_parent() noexcept { return std::move(parent_); }
+    [[nodiscard]] std::unique_ptr<Node> get_left()   noexcept { return std::move(left_); }
+    [[nodiscard]] std::unique_ptr<Node> get_right()  noexcept { return std::move(right_); }
+
+    [[nodiscard]] Node* get_parent_ptr() const noexcept { return parent_.get(); }
+    [[nodiscard]] Node* get_left_ptr() const noexcept { return left_.get(); }
+    [[nodiscard]] Node* get_right_ptr() const noexcept { return right_.get(); }
+
+    void clear_left() noexcept { left_.reset(); }
+    void clear_right() noexcept { right_.reset(); }
+    void clear_parent() noexcept { parent_.reset(); }
+    
+    [[nodiscard]] Color get_color() const noexcept { return color_; }
+    void set_color(Color color) noexcept { color_ = color; }
+
+    [[nodiscard]] const Key_T& get_key() const noexcept { return key_; }
+    void set_key(const Key_T& key) noexcept { key_ = key; }
+
+private:
+
+
 };
 
 } // namespace RB_tree 
