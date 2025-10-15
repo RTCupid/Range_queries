@@ -6,6 +6,10 @@
 #include <fstream>
 #include <functional>
 #include <memory>
+#include <cassert>
+#include <utility>
+
+#include "node.hpp"
 
 namespace RB_tree {
 
@@ -135,5 +139,7 @@ void Tree<KeyT, Compare>::dump_graph_connect_nodes(const Node<KeyT> *node,
 }
 
 } // namespace RB_tree
+
+#endif
 
 #endif // INCLUDE_TREE_HPP
