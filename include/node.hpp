@@ -7,7 +7,7 @@ namespace RB_tree {
 
 enum class Color { red, black };
 
-template <typename KeyT> struct Node {
+template <typename KeyT> class Node {
 private:
     Node *parent_{nullptr};
     std::unique_ptr<Node> left_{nullptr};

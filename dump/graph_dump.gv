@@ -3,18 +3,26 @@ digraph G {
     node [style=filled, fontname="Helvetica", fontcolor=darkblue, fillcolor=peachpuff, color="#252A34", penwidth=2.5];
     bgcolor="lemonchiffon";
 
-node_0x560f93610ef0[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x560f93610ef0 | key: 10 | parent: 0| { left: 0x560f93610f20 | right: 0x560f93610f50 } }"];
-node_0x560f93610f20[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x560f93610f20 | key: 5 | parent: 0x560f93610ef0| { left: 0 | right: 0 } }"];
-node_0x560f93610f50[shape=Mrecord; style=filled; fillcolor=salmon; color="#000000"; fontcolor="#000000"; label="{ node_0x560f93610f50 | key: 15 | parent: 0x560f93610ef0| { left: 0 | right: 0 } }"];
+node_0x561213a6aef0[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x561213a6aef0 | key: 10 | parent: 0| { left: 0x561213a6af20 | right: 0x561213a6af50 } }"];
+node_0x561213a6af20[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x561213a6af20 | key: 5 | parent: 0x561213a6aef0| { left: 0x561213a6af80 | right: 0x561213a6afb0 } }"];
+node_0x561213a6af80[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x561213a6af80 | key: 7 | parent: 0x561213a6af20| { left: 0 | right: 0 } }"];
+node_0x561213a6afb0[shape=Mrecord; style=filled; fillcolor=salmon; color="#000000"; fontcolor="#000000"; label="{ node_0x561213a6afb0 | key: 4 | parent: 0x561213a6af20| { left: 0 | right: 0 } }"];
+node_0x561213a6af50[shape=Mrecord; style=filled; fillcolor=salmon; color="#000000"; fontcolor="#000000"; label="{ node_0x561213a6af50 | key: 15 | parent: 0x561213a6aef0| { left: 0 | right: 0 } }"];
 
-    node_0x560f93610ef0 -> node_0x560f93610f20;
-    node_0x560f93610ef0 -> node_0x560f93610f50;
-    nil_0x560f93610f20_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
-    node_0x560f93610f20 -> nil_0x560f93610f20_L;
-    nil_0x560f93610f20_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
-    node_0x560f93610f20 -> nil_0x560f93610f20_R;
-    nil_0x560f93610f50_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
-    node_0x560f93610f50 -> nil_0x560f93610f50_L;
-    nil_0x560f93610f50_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
-    node_0x560f93610f50 -> nil_0x560f93610f50_R;
+    node_0x561213a6aef0 -> node_0x561213a6af20;
+    node_0x561213a6aef0 -> node_0x561213a6af50;
+    node_0x561213a6af20 -> node_0x561213a6af80;
+    node_0x561213a6af20 -> node_0x561213a6afb0;
+    nil_0x561213a6af80_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x561213a6af80 -> nil_0x561213a6af80_L;
+    nil_0x561213a6af80_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x561213a6af80 -> nil_0x561213a6af80_R;
+    nil_0x561213a6afb0_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x561213a6afb0 -> nil_0x561213a6afb0_L;
+    nil_0x561213a6afb0_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x561213a6afb0 -> nil_0x561213a6afb0_R;
+    nil_0x561213a6af50_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x561213a6af50 -> nil_0x561213a6af50_L;
+    nil_0x561213a6af50_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x561213a6af50 -> nil_0x561213a6af50_R;
 }
