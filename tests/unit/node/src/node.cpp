@@ -5,12 +5,6 @@
 
 using namespace RB_tree;
 
-TEST(NodeTest, DefaultConstructor) {
-    Node<int> node;
-    EXPECT_EQ(node.get_key(), int{});
-    EXPECT_TRUE(node.is_red());
-}
-
 TEST(NodeTest, ConstructorWithKeyAndColor) {
     Node<int> node_int(42, Color::red);
     EXPECT_EQ(node_int.get_key(), 42);

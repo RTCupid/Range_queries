@@ -7,16 +7,15 @@ namespace RB_tree {
 
 enum class Color { red, black };
 
-template <typename KeyT> class Node {
-  private:
+template <typename KeyT> struct Node {
+private:
     Node *parent_{nullptr};
     std::unique_ptr<Node> left_{nullptr};
     std::unique_ptr<Node> right_{nullptr};
     Color color_{Color::red};
-    KeyT key_{0};
+    KeyT key_;
 
-  public:
-    Node() = default;
+public:
     Node(const Node &) = delete;
     Node &operator=(const Node &) = delete;
     Node(Node &&) = default;
@@ -39,6 +38,7 @@ template <typename KeyT> class Node {
         if (right_)
             right_->parent_ = this;
     }
+
     void set_parent(Node *node) noexcept { parent_ = node; }
 
     [[nodiscard]] Node *get_parent_ptr() noexcept { return parent_; }
@@ -48,6 +48,9 @@ template <typename KeyT> class Node {
     [[nodiscard]] const Node *get_parent_ptr() const noexcept { return parent_; }
     [[nodiscard]] const Node *get_left_ptr() const noexcept { return left_.get(); }
     [[nodiscard]] const Node *get_right_ptr() const noexcept { return right_.get(); }
+
+    [[nodiscard]] const std::unique_ptr<Node> &get_left() const noexcept { return left_; }
+    [[nodiscard]] const std::unique_ptr<Node> &get_right() const noexcept { return right_; }
 
     void clear_left() noexcept { left_.reset(); }
     void clear_right() noexcept { right_.reset(); }
