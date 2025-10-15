@@ -8,14 +8,14 @@ namespace RB_tree {
 enum class Color { red, black };
 
 template <typename KeyT> class Node {
-private:
+  private:
     Node *parent_{nullptr};
     std::unique_ptr<Node> left_{nullptr};
     std::unique_ptr<Node> right_{nullptr};
     Color color_{Color::red};
     KeyT key_;
 
-public:
+  public:
     Node(const Node &) = delete;
     Node &operator=(const Node &) = delete;
     Node(Node &&) = default;

@@ -18,9 +18,8 @@ int main() {
 
     root->set_left(std::move(left));
     root->set_right(std::move(right));
-    
+
     tree.get_root_ref() = std::move(root);
 
     tree.dump_graph();
-    
 }
