@@ -30,16 +30,10 @@ template <typename KeyT> class Node {
     [[nodiscard]] bool is_red() const noexcept { return color_ == Color::red; }
     [[nodiscard]] bool is_black() const noexcept { return color_ == Color::black; }
 
-    void set_left(Node *node) noexcept {
-        left_ = node;
-    }
-    void set_right(Node *node) noexcept {
-        right_ = node;
-    }
+    void set_left(Node *node) noexcept { left_ = node; }
+    void set_right(Node *node) noexcept { right_ = node; }
 
-    void set_parent(Node *node) noexcept {
-        parent_ = node;
-    }
+    void set_parent(Node *node) noexcept { parent_ = node; }
 
     [[nodiscard]] Node *get_parent() noexcept { return parent_; }
     [[nodiscard]] Node *get_left() noexcept { return left_; }

@@ -19,13 +19,9 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     Compare comp_;
 
   public:
-    Tree() {
-        root_ = nullptr;
-    }
+    Tree() { root_ = nullptr; }
 
-    ~Tree() {
-        destroy_subtree(root_);
-    }
+    ~Tree() { destroy_subtree(root_); }
 
     Tree(const Tree &) = delete;
     Tree &operator=(const Tree &) = delete;
@@ -69,7 +65,6 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
   private:
-
     void destroy_subtree(Node<KeyT> *node) {
         if (!node)
             return;
