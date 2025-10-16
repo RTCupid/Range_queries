@@ -1,21 +1,21 @@
 #ifndef INCLUDE_NODE_HPP
 #define INCLUDE_NODE_HPP
 
-#include <memory>
 #include <cassert>
+#include <memory>
 
 namespace RB_tree {
 
 enum class Color { red, black };
 
 template <typename KeyT> class Node {
-private:
+  private:
     Node *parent_{nullptr};
-    Node* left_{nullptr};
-    Node* right_{nullptr};
+    Node *left_{nullptr};
+    Node *right_{nullptr};
     KeyT key_;
-    
-public:
+
+  public:
     Color color_{Color::red};
 
     Node(const Node &) = delete;
@@ -30,18 +30,18 @@ public:
     [[nodiscard]] bool is_red() const noexcept { return color_ == Color::red; }
     [[nodiscard]] bool is_black() const noexcept { return color_ == Color::black; }
 
-    void set_left(Node* node) noexcept {
+    void set_left(Node *node) noexcept {
         assert(node);
         left_ = node;
     }
-    void set_right(Node* node) noexcept {
+    void set_right(Node *node) noexcept {
         assert(node);
         right_ = node;
     }
 
-    void set_parent(Node *node) noexcept { 
+    void set_parent(Node *node) noexcept {
         assert(node);
-        parent_ = node; 
+        parent_ = node;
     }
 
     [[nodiscard]] Node *get_parent() noexcept { return parent_; }
