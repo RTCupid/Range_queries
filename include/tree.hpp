@@ -14,27 +14,51 @@ const std::string dump_file_svg = "../dump/graph_dump.svg";
 
 template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 private:
-    std::unique_ptr<Node<KeyT>> root_{nullptr};
+    Node<KeyT>* root_{nullptr};
+    Node<KeyT>* nil_;
     Compare comp_;
 public:
-    Tree() = default;
-    ~Tree() = default;
+    Tree() {
+        init_nil();
+        root_ = nil_;
+    }
+
+    ~Tree() {
+        destroy_subtree(root_);
+        delete nil_;
+    }
+
     Tree(const Tree &) = delete;
     Tree &operator=(const Tree &) = delete;
     Tree(Tree &&) = default;
     Tree &operator=(Tree &&) = default;
 
-    std::unique_ptr<Node<KeyT>>& get_root_ref() noexcept { // TODO ___DELETE_IT___
-        return root_;                                      // NOTE __THIS_IS_TEMP_METHOD__
-    }                                                      //ANCHOR - FOR DEBUG GRAPH DUMP
+    void debug_set_root(Node<KeyT>* new_root) noexcept {
+        root_ = new_root;
+    }                                                  //NOTE - FOR DEBUG GRAPH DUMP
 
     void dump_graph() const;
 
 private:
-    [[nodiscard]] bool is_nil(const Node<KeyT> *node) const noexcept { return node == nullptr; }
+    void init_nil() {
+        nil_ = new Node<KeyT>(KeyT{}, Color::black);
+        nil_->set_parent(nil_);
+        nil_->set_left(nil_);
+        nil_->set_right(nil_);
+        nil_->color_ = Color::black ;
+    }
 
-    void dump_graph_list_nodes(const std::unique_ptr<Node<KeyT>> &node, std::ofstream &gv) const;
-    void dump_graph_connect_nodes(const std::unique_ptr<Node<KeyT>> &node, std::ofstream &gv) const;
+    void destroy_subtree(Node<KeyT>* node) {
+        if (!node || node == nil_) {
+            return;
+        }
+        destroy_subtree(node->get_left());
+        destroy_subtree(node->get_right());
+        delete node;
+    }
+
+    void dump_graph_list_nodes(const Node<KeyT>* node, std::ofstream &gv) const;
+    void dump_graph_connect_nodes(const Node<KeyT>* node, std::ofstream &gv) const;
 };
 
 template <typename KeyT, typename Compare>
@@ -60,17 +84,17 @@ void Tree<KeyT, Compare>::dump_graph() const {
 }
 
 template <typename KeyT, typename Compare>
-void Tree<KeyT, Compare>::dump_graph_list_nodes(const std::unique_ptr<Node<KeyT>> &node, std::ofstream &gv) const {
+void Tree<KeyT, Compare>::dump_graph_list_nodes(const Node<KeyT>* node, std::ofstream &gv) const {
     if (!node) return;
 
     std::string fillcolor = node->is_red() ? "salmon" : "lightgray";
 
-    gv << "node_" << node.get()
+    gv << "    node_" << node
        << "[shape=Mrecord; style=filled; fillcolor=" << fillcolor << "; color=\"#000000\"; "
           "fontcolor=\"#000000\"; "
-       << "label=\"{ node_" << node.get() << " | key: " << node->get_key() << " | parent: " << node->get_parent_ptr() 
-       << "| { left: " << node->get_left_ptr() 
-       << " | right: " << node->get_right_ptr() << " } }\"" << "];\n";
+       << "label=\"{ node_" << node << " | key: " << node->get_key() << " | parent: " << node->get_parent() 
+       << "| { left: " << node->get_left() 
+       << " | right: " << node->get_right() << " } }\"" << "];\n";
 
     if (node->get_left())
         dump_graph_list_nodes(node->get_left(), gv);
@@ -79,11 +103,11 @@ void Tree<KeyT, Compare>::dump_graph_list_nodes(const std::unique_ptr<Node<KeyT>
 }
 
 template <typename KeyT, typename Compare>
-void Tree<KeyT, Compare>::dump_graph_connect_nodes(const std::unique_ptr<Node<KeyT>> &node, std::ofstream &gv) const {
+void Tree<KeyT, Compare>::dump_graph_connect_nodes(const Node<KeyT>* node, std::ofstream &gv) const {
     if (!node) return;
 
     if (node->get_left())
-        gv << "    node_" << node.get() << " -> node_" << node->get_left().get() << ";\n";
+        gv << "    node_" << node << " -> node_" << node->get_left() << ";\n";
     else {
         gv << "    nil_" << node << "_L"
            << " [shape=Mrecord; style=filled; fillcolor=lightgray; color=\"#000000\"; fontcolor=\"#000000\"; label=\"nil_node\"];\n";
@@ -91,7 +115,7 @@ void Tree<KeyT, Compare>::dump_graph_connect_nodes(const std::unique_ptr<Node<Ke
            << " -> nil_" << node << "_L;\n";
     }
     if (node->get_right())
-        gv << "    node_" << node.get() << " -> node_" << node->get_right().get() << ";\n";
+        gv << "    node_" << node << " -> node_" << node->get_right() << ";\n";
     else {
         gv << "    nil_" << node << "_R"
            << " [shape=Mrecord; style=filled; fillcolor=lightgray; color=\"#000000\"; fontcolor=\"#000000\"; label=\"nil_node\"];\n";
