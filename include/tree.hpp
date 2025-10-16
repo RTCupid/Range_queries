@@ -33,6 +33,10 @@ public:
     Tree(Tree &&) = default;
     Tree &operator=(Tree &&) = default;
 
+    [[nodiscard]] bool is_nil(const Node<KeyT>* node) const noexcept {
+        return node == nil_;
+    }
+
     void debug_set_root(Node<KeyT>* new_root) noexcept {
         root_ = new_root;
     }                                                  //NOTE - FOR DEBUG GRAPH DUMP
@@ -49,7 +53,7 @@ private:
     }
 
     void destroy_subtree(Node<KeyT>* node) {
-        if (!node || node == nil_) {
+        if (!node || is_nil(node)) {
             return;
         }
         destroy_subtree(node->get_left());
