@@ -13,6 +13,22 @@ namespace RB_tree {
 const std::string dump_file_gv = "../dump/graph_dump.gv";
 const std::string dump_file_svg = "../dump/graph_dump.svg";
 
+enum class CompResult {
+    less,
+    equal,
+    greater
+};
+
+template<typename T, typename Compare>
+CompResult compare(const T &first, const T &second) {
+    if (Compare{}(first, second))
+        return CompResult::less;
+    else if (Compare{}(second, first))
+        return CompResult::greater;
+
+    return CompResult::equal;
+}
+
 template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
     Node<KeyT> *root_{nullptr};
@@ -42,21 +58,24 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         while (current) {
             parent = current;
-            auto curr_key = current->get_key();
 
-            if (key < curr_key)
-                current = current->get_left();
-            else if (key > curr_key)
-                current = current->get_right();
-            else
-                return;
+            switch(compare<KeyT, Compare>(key, current->get_key())) {
+                case CompResult::less:
+                    current = current->get_left();
+                    break;
+                case CompResult::greater:
+                    current = current->get_right();
+                    break;
+                default:
+                    return;
+            }
         }
 
         new_node->set_parent(parent);
 
         if (parent == nullptr)
             root_ = new_node;
-        else if (key < parent->get_key())
+        else if (compare<KeyT, Compare>(key, parent->get_key()) == CompResult::less)
             parent->set_left(new_node);
         else
             parent->set_right(new_node);

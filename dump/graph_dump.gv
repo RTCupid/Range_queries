@@ -1,0 +1,48 @@
+digraph G {
+    rankdir=TB;
+    node [style=filled, fontname="Helvetica", fontcolor=darkblue, fillcolor=peachpuff, color="#252A34", penwidth=2.5];
+    bgcolor="lemonchiffon";
+
+    node_0x5ec2be95e3b0[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e3b0 | key: 31 | parent: 0| { left: 0x5ec2be95e2f0 | right: 0x5ec2be95e410 } }"];
+    node_0x5ec2be95e2f0[shape=Mrecord; style=filled; fillcolor=salmon; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e2f0 | key: 5 | parent: 0x5ec2be95e3b0| { left: 0x5ec2be95e350 | right: 0x5ec2be95e320 } }"];
+    node_0x5ec2be95e350[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e350 | key: 4 | parent: 0x5ec2be95e2f0| { left: 0x5ec2be95e380 | right: 0 } }"];
+    node_0x5ec2be95e380[shape=Mrecord; style=filled; fillcolor=salmon; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e380 | key: 3 | parent: 0x5ec2be95e350| { left: 0 | right: 0 } }"];
+    node_0x5ec2be95e320[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e320 | key: 6 | parent: 0x5ec2be95e2f0| { left: 0 | right: 0 } }"];
+    node_0x5ec2be95e410[shape=Mrecord; style=filled; fillcolor=salmon; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e410 | key: 65 | parent: 0x5ec2be95e3b0| { left: 0x5ec2be95e3e0 | right: 0x5ec2be95e470 } }"];
+    node_0x5ec2be95e3e0[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e3e0 | key: 34 | parent: 0x5ec2be95e410| { left: 0 | right: 0 } }"];
+    node_0x5ec2be95e470[shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e470 | key: 85 | parent: 0x5ec2be95e410| { left: 0x5ec2be95e440 | right: 0x5ec2be95e4a0 } }"];
+    node_0x5ec2be95e440[shape=Mrecord; style=filled; fillcolor=salmon; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e440 | key: 75 | parent: 0x5ec2be95e470| { left: 0 | right: 0 } }"];
+    node_0x5ec2be95e4a0[shape=Mrecord; style=filled; fillcolor=salmon; color="#000000"; fontcolor="#000000"; label="{ node_0x5ec2be95e4a0 | key: 95 | parent: 0x5ec2be95e470| { left: 0 | right: 0 } }"];
+
+    node_0x5ec2be95e3b0 -> node_0x5ec2be95e2f0;
+    node_0x5ec2be95e3b0 -> node_0x5ec2be95e410;
+    node_0x5ec2be95e2f0 -> node_0x5ec2be95e350;
+    node_0x5ec2be95e2f0 -> node_0x5ec2be95e320;
+    node_0x5ec2be95e350 -> node_0x5ec2be95e380;
+    nil_0x5ec2be95e350_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e350 -> nil_0x5ec2be95e350_R;
+    nil_0x5ec2be95e380_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e380 -> nil_0x5ec2be95e380_L;
+    nil_0x5ec2be95e380_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e380 -> nil_0x5ec2be95e380_R;
+    nil_0x5ec2be95e320_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e320 -> nil_0x5ec2be95e320_L;
+    nil_0x5ec2be95e320_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e320 -> nil_0x5ec2be95e320_R;
+    node_0x5ec2be95e410 -> node_0x5ec2be95e3e0;
+    node_0x5ec2be95e410 -> node_0x5ec2be95e470;
+    nil_0x5ec2be95e3e0_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e3e0 -> nil_0x5ec2be95e3e0_L;
+    nil_0x5ec2be95e3e0_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e3e0 -> nil_0x5ec2be95e3e0_R;
+    node_0x5ec2be95e470 -> node_0x5ec2be95e440;
+    node_0x5ec2be95e470 -> node_0x5ec2be95e4a0;
+    nil_0x5ec2be95e440_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e440 -> nil_0x5ec2be95e440_L;
+    nil_0x5ec2be95e440_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e440 -> nil_0x5ec2be95e440_R;
+    nil_0x5ec2be95e4a0_L [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e4a0 -> nil_0x5ec2be95e4a0_L;
+    nil_0x5ec2be95e4a0_R [shape=Mrecord; style=filled; fillcolor=lightgray; color="#000000"; fontcolor="#000000"; label="nil_node"];
+    node_0x5ec2be95e4a0 -> nil_0x5ec2be95e4a0_R;
+}
