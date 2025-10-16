@@ -31,16 +31,13 @@ template <typename KeyT> class Node {
     [[nodiscard]] bool is_black() const noexcept { return color_ == Color::black; }
 
     void set_left(Node *node) noexcept {
-        assert(node);
         left_ = node;
     }
     void set_right(Node *node) noexcept {
-        assert(node);
         right_ = node;
     }
 
     void set_parent(Node *node) noexcept {
-        assert(node);
         parent_ = node;
     }
 
