@@ -12,19 +12,21 @@ int main() {
         int fst, snd;
 
         std::cin >> query;
-        switch(query) {
-            case 'k':
-                std::cin >> key;
-                if (std::cin.bad()) return 0;
-                tree.insert(key);
-                break;
-            case 'q':
-                std::cin >> fst >> snd;
-                if (std::cin.bad()) return 0;
-                //range_query(tree, fst, snd);
-                break;
-            default:
-                std::cout << "unknown command\n";
+        switch (query) {
+        case 'k':
+            std::cin >> key;
+            if (std::cin.bad())
+                return 0;
+            tree.insert(key);
+            break;
+        case 'q':
+            std::cin >> fst >> snd;
+            if (std::cin.bad())
+                return 0;
+            // range_query(tree, fst, snd);
+            break;
+        default:
+            std::cout << "unknown command\n";
         }
     }
 
