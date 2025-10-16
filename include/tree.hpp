@@ -13,14 +13,9 @@ namespace RB_tree {
 const std::string dump_file_gv = "../dump/graph_dump.gv";
 const std::string dump_file_svg = "../dump/graph_dump.svg";
 
-enum class CompResult {
-    less,
-    equal,
-    greater
-};
+enum class CompResult { less, equal, greater };
 
-template<typename T, typename Compare>
-CompResult compare(const T &first, const T &second) {
+template <typename T, typename Compare> CompResult compare(const T &first, const T &second) {
     if (Compare{}(first, second))
         return CompResult::less;
     else if (Compare{}(second, first))
@@ -59,15 +54,15 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         while (current) {
             parent = current;
 
-            switch(compare<KeyT, Compare>(key, current->get_key())) {
-                case CompResult::less:
-                    current = current->get_left();
-                    break;
-                case CompResult::greater:
-                    current = current->get_right();
-                    break;
-                default:
-                    return;
+            switch (compare<KeyT, Compare>(key, current->get_key())) {
+            case CompResult::less:
+                current = current->get_left();
+                break;
+            case CompResult::greater:
+                current = current->get_right();
+                break;
+            default:
+                return;
             }
         }
 
