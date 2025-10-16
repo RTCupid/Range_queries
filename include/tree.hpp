@@ -26,32 +26,32 @@ template <typename T, typename Compare> CompResult compare(const T &first, const
 
 template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
-    Node<KeyT> *root_{nullptr};
+    Node<KeyT> *nil_;
+    Node<KeyT> *root_;
     Compare comp_;
 
   public:
-    Tree() { root_ = nullptr; }
+    Tree() : nil_(new Node<KeyT>()), root_(nil_) {}
 
-    ~Tree() { destroy_subtree(root_); }
+    ~Tree() {
+        destroy_subtree(root_);
+        delete nil_;
+    }
 
     Tree(const Tree &) = delete;
-    Tree &operator=(const Tree &) = delete;
     Tree(Tree &&) = default;
+    Tree &operator=(const Tree &) = delete;
     Tree &operator=(Tree &&) = default;
-
-    void debug_set_root(Node<KeyT> *new_root) noexcept {
-        root_ = new_root;
-    } // NOTE - FOR DEBUG GRAPH DUMP
 
     void dump_graph() const;
 
     void insert(const KeyT &key) {
         auto *new_node = new Node<KeyT>(key);
 
-        Node<KeyT> *parent = nullptr;
+        Node<KeyT> *parent = nil_;
         auto current = root_;
 
-        while (current) {
+        while (!current->is_nil()) {
             parent = current;
 
             switch (compare<KeyT, Compare>(key, current->get_key())) {
@@ -68,19 +68,22 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         new_node->set_parent(parent);
 
-        if (parent == nullptr)
+        if (parent->is_nil())
             root_ = new_node;
         else if (compare<KeyT, Compare>(key, parent->get_key()) == CompResult::less)
             parent->set_left(new_node);
         else
             parent->set_right(new_node);
 
+        new_node->set_left(nil_);
+        new_node->set_right(nil_);
+
         fix_insert(new_node);
     }
 
   private:
     void destroy_subtree(Node<KeyT> *node) {
-        if (!node)
+        if (!node || node->is_nil())
             return;
 
         destroy_subtree(node->get_left());
@@ -88,7 +91,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         delete node;
     }
     void fix_insert(Node<KeyT> *new_node) {
-        assert(new_node);
+        assert(new_node && !new_node->is_nil());
 
         auto color_of = [](const Node<KeyT> *n) noexcept { return n ? n->color_ : Color::black; };
 
@@ -150,12 +153,12 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         auto left_node = node->get_left();
         node->set_left(left_node->get_right());
 
-        if (left_node->get_right())
+        if (!left_node->get_right()->is_nil())
             left_node->get_right()->set_parent(node);
 
         left_node->set_parent(node->get_parent());
 
-        if (!node->get_parent())
+        if (node->get_parent()->is_nil())
             root_ = left_node;
         else if (node == node->get_parent()->get_left())
             node->get_parent()->set_left(left_node);
@@ -173,12 +176,12 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         auto right_node = node->get_right();
         node->set_right(right_node->get_left());
 
-        if (right_node->get_left())
+        if (!right_node->get_left()->is_nil())
             right_node->get_left()->set_parent(node);
 
         right_node->set_parent(node->get_parent());
 
-        if (!node->get_parent())
+        if (node->get_parent()->is_nil())
             root_ = right_node;
         else if (node == node->get_parent()->get_right())
             node->get_parent()->set_right(right_node);
@@ -228,9 +231,9 @@ void Tree<KeyT, Compare>::dump_graph_list_nodes(const Node<KeyT> *node, std::ofs
        << " | parent: " << node->get_parent() << "| { left: " << node->get_left()
        << " | right: " << node->get_right() << " } }\"" << "];\n";
 
-    if (node->get_left())
+    if (!node->get_left()->is_nil())
         dump_graph_list_nodes(node->get_left(), gv);
-    if (node->get_right())
+    if (!node->get_right()->is_nil())
         dump_graph_list_nodes(node->get_right(), gv);
 }
 
@@ -240,7 +243,7 @@ void Tree<KeyT, Compare>::dump_graph_connect_nodes(const Node<KeyT> *node,
     if (!node)
         return;
 
-    if (node->get_left())
+    if (!node->get_left()->is_nil())
         gv << "    node_" << node << " -> node_" << node->get_left() << ";\n";
     else {
         gv << "    nil_" << node << "_L"
@@ -248,7 +251,7 @@ void Tree<KeyT, Compare>::dump_graph_connect_nodes(const Node<KeyT> *node,
               "fontcolor=\"#000000\"; label=\"nil_node\"];\n";
         gv << "    node_" << node << " -> nil_" << node << "_L;\n";
     }
-    if (node->get_right())
+    if (!node->get_right()->is_nil())
         gv << "    node_" << node << " -> node_" << node->get_right() << ";\n";
     else {
         gv << "    nil_" << node << "_R"
@@ -257,9 +260,9 @@ void Tree<KeyT, Compare>::dump_graph_connect_nodes(const Node<KeyT> *node,
         gv << "    node_" << node << " -> nil_" << node << "_R;\n";
     }
 
-    if (node->get_left())
+    if (!node->get_left()->is_nil())
         dump_graph_connect_nodes(node->get_left(), gv);
-    if (node->get_right())
+    if (!node->get_right()->is_nil())
         dump_graph_connect_nodes(node->get_right(), gv);
 }
 

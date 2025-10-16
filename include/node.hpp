@@ -13,7 +13,7 @@ template <typename KeyT> class Node {
     Node *parent_{nullptr};
     Node *left_{nullptr};
     Node *right_{nullptr};
-    KeyT key_;
+    KeyT key_{};
 
   public:
     Color color_{Color::red};
@@ -24,8 +24,11 @@ template <typename KeyT> class Node {
     Node &operator=(Node &&) = default;
     ~Node() = default;
 
-    explicit Node(const KeyT &key, Color color = Color::red) : color_{color}, key_{key} {}
-    explicit Node(KeyT &&key, Color color = Color::red) : color_(color), key_(std::move(key)) {}
+    /// constructor for nil-sentinel
+    Node() : parent_(this), left_(this), right_(this), color_(Color::black) {}
+
+    explicit Node(const KeyT &key, Color color = Color::red) : key_(key), color_(color) {}
+    explicit Node(KeyT &&key, Color color = Color::red) : key_(std::move(key)), color_(color) {}
 
     [[nodiscard]] bool is_red() const noexcept { return color_ == Color::red; }
     [[nodiscard]] bool is_black() const noexcept { return color_ == Color::black; }
@@ -44,6 +47,8 @@ template <typename KeyT> class Node {
     [[nodiscard]] const Node *get_right() const noexcept { return right_; }
 
     [[nodiscard]] const KeyT &get_key() const noexcept { return key_; }
+
+    bool is_nil() const { return this == parent_; }
 };
 
 } // namespace RB_tree
