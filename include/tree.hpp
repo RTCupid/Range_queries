@@ -1,13 +1,10 @@
 #ifndef INCLUDE_TREE_HPP
 #define INCLUDE_TREE_HPP
 
-#include "node.hpp"
 #include <cassert>
-#include <cstddef>
 #include <fstream>
 #include <functional>
-#include <memory>
-#include <utility>
+#include <iostream>
 
 #include "node.hpp"
 
@@ -19,26 +16,21 @@ const std::string dump_file_svg = "../dump/graph_dump.svg";
 template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
     Node<KeyT> *root_{nullptr};
-    Node<KeyT> *nil_;
     Compare comp_;
 
   public:
     Tree() {
-        init_nil();
-        root_ = nil_;
+        root_ = nullptr;
     }
 
     ~Tree() {
         destroy_subtree(root_);
-        delete nil_;
     }
 
     Tree(const Tree &) = delete;
     Tree &operator=(const Tree &) = delete;
     Tree(Tree &&) = default;
     Tree &operator=(Tree &&) = default;
-
-    [[nodiscard]] bool is_nil(const Node<KeyT> *node) const noexcept { return node == nil_; }
 
     void debug_set_root(Node<KeyT> *new_root) noexcept {
         root_ = new_root;
@@ -52,17 +44,21 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         Node<KeyT> *parent = nullptr;
         auto current = root_;
 
-        while (!is_nil(current)) {
+        while (current) {
             parent = current;
-            if (key < current->get_key())
+            auto curr_key = current->get_key();
+
+            if (key < curr_key)
                 current = current->get_left();
-            else
+            else if (key > curr_key)
                 current = current->get_right();
+            else
+                return;
         }
 
         new_node->set_parent(parent);
 
-        if (is_nil(parent))
+        if (parent == nullptr)
             root_ = new_node;
         else if (key < parent->get_key())
             parent->set_left(new_node);
@@ -73,18 +69,11 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
   private:
-    void init_nil() {
-        nil_ = new Node<KeyT>(KeyT{}, Color::black);
-        nil_->set_parent(nil_);
-        nil_->set_left(nil_);
-        nil_->set_right(nil_);
-        nil_->color_ = Color::black;
-    }
 
     void destroy_subtree(Node<KeyT> *node) {
-        if (!node || is_nil(node)) {
+        if (!node)
             return;
-        }
+
         destroy_subtree(node->get_left());
         destroy_subtree(node->get_right());
         delete node;
@@ -92,9 +81,9 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     void fix_insert(Node<KeyT> *new_node) {
         assert(new_node);
 
-        while (new_node->get_parent()->color_ == Color::red) {
+        while (new_node->get_parent() && new_node->get_parent()->color_ == Color::red) {
             if (new_node->get_parent() == new_node->get_parent()->get_parent()->get_left()) {
-                auto uncle = new_node->get_parent()->get_parent().get_right();
+                auto uncle = new_node->get_parent()->get_parent()->get_right();
 
                 if (uncle->color_ == Color::red) {
                     new_node->get_parent()->color_ = Color::black;
@@ -108,14 +97,14 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
                         left_rotate(new_node);
                     }
 
-                    new_node->get_parent().color_ = Color::black;
+                    new_node->get_parent()->color_ = Color::black;
 
                     auto grand_father = new_node->get_parent()->get_parent();
                     grand_father->color_ = Color::red;
                     right_rotate(grand_father);
                 }
             } else {
-                auto uncle = new_node->get_parent()->get_parent().get_left();
+                auto uncle = new_node->get_parent()->get_parent()->get_left();
 
                 if (uncle->color_ == Color::red) {
                     new_node->get_parent()->color_ = Color::black;
@@ -140,15 +129,18 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
     void right_rotate(Node<KeyT> *node) {
+        assert(node);
+        assert(node->get_left());
+
         auto left_node = node->get_left();
         node->set_left(left_node->get_right());
 
-        if (!is_nil(left_node->get_right()))
+        if (left_node->get_right())
             left_node->get_right()->set_parent(node);
 
         left_node->set_parent(node->get_parent());
 
-        if (node->get_parent() == nullptr)
+        if (!node->get_parent())
             root_ = left_node;
         else if (node == node->get_parent()->get_left())
             node->get_parent()->set_left(left_node);
@@ -160,15 +152,18 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
     void left_rotate(Node<KeyT> *node) {
+        assert(node);
+        assert(node->get_right());
+
         auto right_node = node->get_right();
         node->set_right(right_node->get_left());
 
-        if (!is_nil(right_node->get_left()))
+        if (right_node->get_left())
             right_node->get_left()->set_parent(node);
 
         right_node->set_parent(node->get_parent());
 
-        if (node->get_parent() == nullptr)
+        if (!node->get_parent())
             root_ = right_node;
         else if (node == node->get_parent()->get_right())
             node->get_parent()->set_right(right_node);
@@ -178,8 +173,6 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         right_node->set_left(node);
         node->set_parent(right_node);
     }
-
-    [[nodiscard]] bool is_nil(const Node<KeyT> *node) const noexcept { return node == nullptr; }
 
     void dump_graph_list_nodes(const Node<KeyT> *node, std::ofstream &gv) const;
     void dump_graph_connect_nodes(const Node<KeyT> *node, std::ofstream &gv) const;
