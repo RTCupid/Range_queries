@@ -76,9 +76,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     void fix_insert(Node<KeyT> *new_node) {
         assert(new_node);
 
-        auto color_of = [](const Node<KeyT>* n) noexcept {
-            return n ? n->color_ : Color::black;
-        };
+        auto color_of = [](const Node<KeyT> *n) noexcept { return n ? n->color_ : Color::black; };
 
         while (new_node->get_parent() && color_of(new_node->get_parent()) == Color::red) {
             auto grand_father = new_node->get_parent()->get_parent();
@@ -87,7 +85,8 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
                 if (color_of(uncle) == Color::red) {
                     new_node->get_parent()->color_ = Color::black;
-                    if (uncle) uncle->color_ = Color::black;
+                    if (uncle)
+                        uncle->color_ = Color::black;
 
                     grand_father->color_ = Color::red;
                     new_node = grand_father;
@@ -108,7 +107,8 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
                 if (color_of(uncle) == Color::red) {
                     new_node->get_parent()->color_ = Color::black;
-                    if (uncle) uncle->color_ = Color::black;
+                    if (uncle)
+                        uncle->color_ = Color::black;
 
                     grand_father->color_ = Color::red;
                     new_node = grand_father;
@@ -125,7 +125,8 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
             }
         }
 
-        if (root_) root_->color_ = Color::black;
+        if (root_)
+            root_->color_ = Color::black;
     }
 
     void right_rotate(Node<KeyT> *node) {
