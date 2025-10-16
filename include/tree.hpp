@@ -2,11 +2,11 @@
 #define INCLUDE_TREE_HPP
 
 #include "node.hpp"
+#include <cassert>
 #include <cstddef>
 #include <fstream>
 #include <functional>
 #include <memory>
-#include <cassert>
 #include <utility>
 
 #include "node.hpp"
@@ -46,6 +46,32 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
     void dump_graph() const;
 
+    void insert(const KeyT &key) {
+        auto *new_node = new Node<KeyT>(key);
+
+        Node<KeyT> *parent = nullptr;
+        auto current = root_;
+
+        while (!is_nil(current)) {
+            parent = current;
+            if (key < current->get_key())
+                current = current->get_left();
+            else
+                current = current->get_right();
+        }
+
+        new_node->set_parent(parent);
+
+        if (is_nil(parent))
+            root_ = new_node;
+        else if (key < parent->get_key())
+            parent->set_left(new_node);
+        else
+            parent->set_right(new_node);
+
+        fix_insert(new_node);
+    }
+
   private:
     void init_nil() {
         nil_ = new Node<KeyT>(KeyT{}, Color::black);
@@ -63,6 +89,98 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         destroy_subtree(node->get_right());
         delete node;
     }
+    void fix_insert(Node<KeyT> *new_node) {
+        assert(new_node);
+
+        while (new_node->get_parent()->color_ == Color::red) {
+            if (new_node->get_parent() ==
+                new_node->get_parent()->get_parent()->get_left()) {
+                auto uncle = new_node->get_parent()->get_parent().get_right();
+
+                if (uncle->color_ == Color::red) {
+                    new_node->get_parent()->color_ = Color::black;
+
+                    auto grand_father = new_node->get_parent()->get_parent();
+                    grand_father->color_ = Color::red;
+                    new_node = grand_father;
+                } else {
+                    if (new_node == new_node->get_parent()->get_right()) {
+                        new_node = new_node->get_parent();
+                        left_rotate(new_node);
+                    }
+
+                    new_node->get_parent().color_ = Color::black;
+
+                    auto grand_father = new_node->get_parent()->get_parent();
+                    grand_father->color_ = Color::red;
+                    right_rotate(grand_father);
+                }
+            } else {
+                auto uncle = new_node->get_parent()->get_parent().get_left();
+
+                if (uncle->color_ == Color::red) {
+                    new_node->get_parent()->color_ = Color::black;
+
+                    auto grand_father = new_node->get_parent()->get_parent();
+                    grand_father->color_ = Color::red;
+                    new_node = grand_father;
+                } else {
+                    if (new_node == new_node->get_parent()->get_left()) {
+                        new_node = new_node->get_parent();
+                        right_rotate(new_node);
+                    }
+
+                    auto grand_father = new_node->get_parent()->get_parent();
+                    grand_father->color_ = Color::red;
+                    left_rotate(grand_father);
+                }
+            }
+        }
+
+        root_->color_ = Color::black;
+    }
+
+    void right_rotate(Node<KeyT> *node) {
+        auto left_node = node->get_left();
+        node->set_left(left_node->get_right());
+
+        if (!is_nil(left_node->get_right()))
+            left_node->get_right()->set_parent(node);
+
+        left_node->set_parent(node->get_parent());
+
+        if (node->get_parent() == nullptr)
+            root_ = left_node;
+        else if (node == node->get_parent()->get_left())
+            node->get_parent()->set_left(left_node);
+        else
+            node->get_parent()->set_right(left_node);
+
+        left_node->set_right(node);
+        node->set_parent(left_node);
+    }
+
+    void left_rotate(Node<KeyT> *node) {
+        auto right_node = node->get_right();
+        node->set_right(right_node->get_left());
+
+        if (!is_nil(right_node->get_left()))
+            right_node->get_left()->set_parent(node);
+
+        right_node->set_parent(node->get_parent());
+
+        if (node->get_parent() == nullptr)
+            root_ = right_node;
+        else if (node == node->get_parent()->get_right())
+            node->get_parent()->set_right(right_node);
+        else
+            node->get_parent()->set_left(right_node);
+
+        right_node->set_left(node);
+        node->set_parent(right_node);
+    }
+
+    [[nodiscard]] bool is_nil(const Node<KeyT> *node) const noexcept { return node == nullptr; }
 
     void dump_graph_list_nodes(const Node<KeyT> *node, std::ofstream &gv) const;
     void dump_graph_connect_nodes(const Node<KeyT> *node, std::ofstream &gv) const;
@@ -139,7 +257,5 @@ void Tree<KeyT, Compare>::dump_graph_connect_nodes(const Node<KeyT> *node,
 }
 
 } // namespace RB_tree
-
-#endif
 
 #endif // INCLUDE_TREE_HPP
