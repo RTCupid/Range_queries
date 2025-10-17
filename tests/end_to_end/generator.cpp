@@ -7,8 +7,8 @@
 #include <functional>
 
 int main() {
-    const int total_commands = 15;
-    const int max_key = 1000;
+    const int total_commands = 10000;
+    const int max_key = 1000000;
     const int max_queries = total_commands / 3;
 
     std::random_device rd;
@@ -16,8 +16,8 @@ int main() {
     std::uniform_int_distribution<int> key_dist(1, max_key);
     std::uniform_int_distribution<int> query_dist(1, max_key);
 
-    std::ofstream data_file("../tests/end_to_end/data/0.dat");
-    std::ofstream answ_file("../tests/end_to_end/answ/0.res");
+    std::ofstream data_file("../tests/end_to_end/data/1.dat");
+    std::ofstream answ_file("../tests/end_to_end/answ/1.res");
 
     if (!data_file.is_open() || !answ_file.is_open()) {
         std::cerr << "Error opening file!" << std::endl;

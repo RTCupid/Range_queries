@@ -2,7 +2,7 @@
 #define INCLUDE_NODE_HPP
 
 #include <cassert>
-#include <memory>
+#include <optional>
 
 namespace RB_tree {
 
@@ -13,7 +13,7 @@ template <typename KeyT> class Node {
     Node *parent_{nullptr};
     Node *left_{nullptr};
     Node *right_{nullptr};
-    KeyT key_{};
+    std::optional<KeyT> key_{};
 
   public:
     Color color_{Color::red};
@@ -25,7 +25,7 @@ template <typename KeyT> class Node {
     ~Node() = default;
 
     /// constructor for nil-sentinel
-    Node() : parent_(this), left_(this), right_(this), color_(Color::black) {}
+    Node() : parent_(this), left_(this), right_(this), key_(std::nullopt), color_(Color::black) {}
 
     explicit Node(const KeyT &key, Color color = Color::red) : key_(key), color_(color) {}
     explicit Node(KeyT &&key, Color color = Color::red) : key_(std::move(key)), color_(color) {}
@@ -46,7 +46,14 @@ template <typename KeyT> class Node {
     [[nodiscard]] const Node *get_left() const noexcept { return left_; }
     [[nodiscard]] const Node *get_right() const noexcept { return right_; }
 
-    [[nodiscard]] const KeyT &get_key() const noexcept { return key_; }
+    [[nodiscard]] const KeyT &get_key() const noexcept {
+        assert(key_.has_value());
+        return key_.value();
+    }
+
+    static Color try_get_color(const Node<KeyT> *n) noexcept {
+        return n ? n->color_ : Color::black;
+    };
 
     bool is_nil() const { return this == parent_; }
 };
