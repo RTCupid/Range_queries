@@ -1,6 +1,6 @@
-#include <iostream>
-
+#include "range_query.hpp"
 #include "tree.hpp"
+#include <iostream>
 
 using namespace RB_tree;
 
@@ -21,7 +21,7 @@ int main() {
             break;
         case 'q':
             if (std::cin >> fst >> snd) {
-                range_query(tree, fst, snd);
+                range_query<Tree<int>, int>(tree, fst, snd);
             }
             break;
         default:

@@ -1,12 +1,12 @@
 #ifndef INCLUDE_TREE_HPP
 #define INCLUDE_TREE_HPP
 
+#include "iterator.hpp"
+#include "node.hpp"
 #include <cassert>
 #include <fstream>
 #include <functional>
 #include <iostream>
-
-#include "node.hpp"
 
 namespace RB_tree {
 
@@ -79,6 +79,38 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         new_node->set_right(nil_);
 
         fix_insert(new_node);
+    }
+
+    using iterator = RB_tree::Iterator<KeyT>;
+
+    iterator lower_bound(const KeyT &key) const {
+        const Node<KeyT> *candidate = nullptr;
+        const Node<KeyT> *current = root_;
+
+        while (current /*current != nill*/) { // FIXME
+            if (current->get_key() >= key) {
+                candidate = current;
+                current = current->get_left();
+            } else {
+                current = current->get_right();
+            }
+        }
+        return iterator(candidate);
+    }
+
+    iterator upper_bound(const KeyT &key) const { // FIXME
+        const Node<KeyT> *candidate = nullptr;
+        const Node<KeyT> *current = root_;
+
+        while (current) {
+            if (current->get_key() > key) {
+                candidate = current;
+                current = current->get_left();
+            } else {
+                current = current->get_right();
+            }
+        }
+        return iterator(candidate);
     }
 
   private:
