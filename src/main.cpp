@@ -21,7 +21,7 @@ int main() {
             break;
         case 'q':
             if (std::cin >> fst >> snd) {
-                range_query<Tree<int>, int>(tree, fst, snd);
+                std::cout << range_query<Tree<int>, int>(tree, fst, snd) << '\n';
             }
             break;
         default:
