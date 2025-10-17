@@ -5,8 +5,8 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
-
 #include "node.hpp"
+#include "iterator.hpp"
 
 namespace RB_tree {
 
@@ -81,7 +81,39 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         fix_insert(new_node);
     }
 
-  private:
+    using iterator = RB_tree::Iterator<KeyT>;
+
+    iterator lower_bound(const KeyT& key) const {
+        const Node<KeyT>* candidate = nullptr;
+        const Node<KeyT>* current = root_;
+
+        while (current /*current != nill*/) { //FIXME 
+            if (current->get_key() >= key) {
+                candidate = current;      
+                current = current->get_left(); 
+            } else {
+                current = current->get_right();
+            }
+        }
+        return iterator(candidate);
+    }
+
+    iterator upper_bound(const KeyT& key) const { //FIXME 
+        const Node<KeyT>* candidate = nullptr;
+        const Node<KeyT>* current = root_;
+    
+        while (current) { 
+            if (current->get_key() > key) {
+                candidate = current;      
+                current = current->get_left();  
+            } else {
+                current = current->get_right(); 
+            }
+        }
+        return iterator(candidate); 
+    }
+
+private:
     void destroy_subtree(Node<KeyT> *node) {
         if (!node || node->is_nil())
             return;
