@@ -88,7 +88,8 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         const Node<KeyT> *current = root_;
 
         while (!current->is_nil()) {
-            if (current->get_key() >= key) {
+            if (compare<KeyT, Compare>(key, current->get_key()) == CompResult::less ||
+                compare<KeyT, Compare>(key, current->get_key()) == CompResult::equal) {
                 candidate = current;
                 current = current->get_left();
             } else {
@@ -103,7 +104,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         const Node<KeyT> *current = root_;
 
         while (!current->is_nil()) {
-            if (current->get_key() > key) {
+            if (compare<KeyT, Compare>(current->get_key(), key) == CompResult::greater) {
                 candidate = current;
                 current = current->get_left();
             } else {
