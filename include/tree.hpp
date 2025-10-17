@@ -1,12 +1,12 @@
 #ifndef INCLUDE_TREE_HPP
 #define INCLUDE_TREE_HPP
 
+#include "iterator.hpp"
+#include "node.hpp"
 #include <cassert>
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include "node.hpp"
-#include "iterator.hpp"
 
 namespace RB_tree {
 
@@ -83,14 +83,14 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
     using iterator = RB_tree::Iterator<KeyT>;
 
-    iterator lower_bound(const KeyT& key) const {
-        const Node<KeyT>* candidate = nil_;
-        const Node<KeyT>* current = root_;
+    iterator lower_bound(const KeyT &key) const {
+        const Node<KeyT> *candidate = nil_;
+        const Node<KeyT> *current = root_;
 
-        while (!current->is_nil()) { 
+        while (!current->is_nil()) {
             if (current->get_key() >= key) {
-                candidate = current;      
-                current = current->get_left(); 
+                candidate = current;
+                current = current->get_left();
             } else {
                 current = current->get_right();
             }
@@ -98,22 +98,22 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         return iterator(candidate);
     }
 
-    iterator upper_bound(const KeyT& key) const { 
-        const Node<KeyT>* candidate = nil_;
-        const Node<KeyT>* current = root_;
-    
-        while (!current->is_nil()) { 
+    iterator upper_bound(const KeyT &key) const {
+        const Node<KeyT> *candidate = nil_;
+        const Node<KeyT> *current = root_;
+
+        while (!current->is_nil()) {
             if (current->get_key() > key) {
-                candidate = current;      
-                current = current->get_left();  
+                candidate = current;
+                current = current->get_left();
             } else {
-                current = current->get_right(); 
+                current = current->get_right();
             }
         }
-        return iterator(candidate); 
+        return iterator(candidate);
     }
 
-private:
+  private:
     void destroy_subtree(Node<KeyT> *node) {
         if (!node || node->is_nil())
             return;
