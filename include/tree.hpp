@@ -118,7 +118,8 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     void fix_insert(Node<KeyT> *new_node) {
         assert(new_node && !new_node->is_nil());
 
-        while (new_node->get_parent() && Node<KeyT>::try_get_color(new_node->get_parent()) == Color::red) {
+        while (new_node->get_parent() &&
+               Node<KeyT>::try_get_color(new_node->get_parent()) == Color::red) {
             auto grand_father = new_node->get_parent()->get_parent();
             if (new_node->get_parent() == grand_father->get_left()) {
                 auto uncle = grand_father->get_right();
