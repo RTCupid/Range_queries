@@ -84,10 +84,10 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     using iterator = RB_tree::Iterator<KeyT>;
 
     iterator lower_bound(const KeyT& key) const {
-        const Node<KeyT>* candidate = nullptr;
+        const Node<KeyT>* candidate = nil_;
         const Node<KeyT>* current = root_;
 
-        while (current /*current != nill*/) { //FIXME 
+        while (!current->is_nil()) { 
             if (current->get_key() >= key) {
                 candidate = current;      
                 current = current->get_left(); 
@@ -98,11 +98,11 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         return iterator(candidate);
     }
 
-    iterator upper_bound(const KeyT& key) const { //FIXME 
-        const Node<KeyT>* candidate = nullptr;
+    iterator upper_bound(const KeyT& key) const { 
+        const Node<KeyT>* candidate = nil_;
         const Node<KeyT>* current = root_;
     
-        while (current) { 
+        while (!current->is_nil()) { 
             if (current->get_key() > key) {
                 candidate = current;      
                 current = current->get_left();  

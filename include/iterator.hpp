@@ -25,14 +25,14 @@ public:
     } 
 
     Iterator& operator++() {
-        if (node_->get_right()) {
+        if (!node_->get_right()->is_nil()) {
             node_ = node_->get_right();
-            while (node_->get_left()) {
+            while (!node_->get_left()->is_nil()) {
                 node_ = node_->get_left();
             }
         } else {
             auto parent = node_->get_parent();
-            while (parent && parent->get_right() == node_) {
+            while ((!parent->is_nil()) && parent->get_right() == node_) {
                 node_ = parent;
                 parent = node_->get_parent();
             }
@@ -42,14 +42,14 @@ public:
     }
 
     Iterator& operator--() {
-        if (node_->get_left()) {
+        if (!node_->get_left()->is_nil()) {
             node_ = node_->get_left();
-            while (node_->get_right()) {
+            while (!node_->get_right()->is_nil()) {
                 node_ = node_->get_right();
             }
         } else {
             auto parent = node_->get_parent();
-            while (parent && parent->get_left() == node_) {
+            while ((!parent->is_nil()) && parent->get_left() == node_) {
                 node_ = parent;
                 parent = node_->get_parent();
             }
