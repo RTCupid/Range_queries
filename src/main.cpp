@@ -1,6 +1,6 @@
-#include <iostream>
 #include "range_query.hpp"
 #include "tree.hpp"
+#include <iostream>
 
 using namespace RB_tree;
 
