@@ -13,17 +13,6 @@ namespace RB_tree {
 const std::string dump_file_gv = "../dump/graph_dump.gv";
 const std::string dump_file_svg = "../dump/graph_dump.svg";
 
-enum class CompResult { less, equal, greater };
-
-template <typename T, typename Compare> CompResult compare(const T &first, const T &second) {
-    if (Compare{}(first, second))
-        return CompResult::less;
-    else if (Compare{}(second, first))
-        return CompResult::greater;
-
-    return CompResult::equal;
-}
-
 template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
     Node<KeyT> *nil_;
@@ -45,32 +34,20 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
     void dump_graph() const;
 
-    void insert(const KeyT &key) {
+    bool insert(const KeyT &key) {
         auto *new_node = new Node<KeyT>(key);
 
         Node<KeyT> *parent = nil_;
         auto current = root_;
 
-        while (!current->is_nil()) {
-            parent = current;
-
-            switch (compare<KeyT, Compare>(key, current->get_key())) {
-            case CompResult::less:
-                current = current->get_left();
-                break;
-            case CompResult::greater:
-                current = current->get_right();
-                break;
-            default:
-                return;
-            }
-        }
+        if (!tree_descent(current, parent, key))
+            return false;
 
         new_node->set_parent(parent);
 
         if (parent->is_nil())
             root_ = new_node;
-        else if (compare<KeyT, Compare>(key, parent->get_key()) == CompResult::less)
+        else if (comp_(key, parent->get_key()))
             parent->set_left(new_node);
         else
             parent->set_right(new_node);
@@ -79,6 +56,8 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         new_node->set_right(nil_);
 
         fix_insert(new_node);
+
+        return true;
     }
 
     using iterator = RB_tree::Iterator<KeyT>;
@@ -88,12 +67,11 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         const Node<KeyT> *current = root_;
 
         while (!current->is_nil()) {
-            if (compare<KeyT, Compare>(key, current->get_key()) == CompResult::less ||
-                compare<KeyT, Compare>(key, current->get_key()) == CompResult::equal) {
+            if (comp_(current->get_key(), key)) {
+                current = current->get_right();
+            } else {
                 candidate = current;
                 current = current->get_left();
-            } else {
-                current = current->get_right();
             }
         }
         return iterator(candidate);
@@ -104,7 +82,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         const Node<KeyT> *current = root_;
 
         while (!current->is_nil()) {
-            if (compare<KeyT, Compare>(current->get_key(), key) == CompResult::greater) {
+            if (comp_(key, current->get_key())) {
                 candidate = current;
                 current = current->get_left();
             } else {
@@ -115,6 +93,20 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
   private:
+    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent, const KeyT &key) const {
+        while (!current->is_nil()) {
+            parent = current;
+
+            if (comp_(key, current->get_key()))
+                current = current->get_left();
+            else if (comp_(current->get_key(), key))
+                current = current->get_right();
+            else
+                return false;
+        }
+        return true;
+    }
+
     void destroy_subtree(Node<KeyT> *node) {
         if (!node || node->is_nil())
             return;
@@ -126,14 +118,12 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     void fix_insert(Node<KeyT> *new_node) {
         assert(new_node && !new_node->is_nil());
 
-        auto color_of = [](const Node<KeyT> *n) noexcept { return n ? n->color_ : Color::black; };
-
-        while (new_node->get_parent() && color_of(new_node->get_parent()) == Color::red) {
+        while (new_node->get_parent() && Node<KeyT>::try_get_color(new_node->get_parent()) == Color::red) {
             auto grand_father = new_node->get_parent()->get_parent();
             if (new_node->get_parent() == grand_father->get_left()) {
                 auto uncle = grand_father->get_right();
 
-                if (color_of(uncle) == Color::red) {
+                if (Node<KeyT>::try_get_color(uncle) == Color::red) {
                     new_node->get_parent()->color_ = Color::black;
                     if (uncle)
                         uncle->color_ = Color::black;
@@ -155,7 +145,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
             } else {
                 auto uncle = grand_father->get_left();
 
-                if (color_of(uncle) == Color::red) {
+                if (Node<KeyT>::try_get_color(uncle) == Color::red) {
                     new_node->get_parent()->color_ = Color::black;
                     if (uncle)
                         uncle->color_ = Color::black;
