@@ -1,7 +1,6 @@
 #ifndef INCLUDE_RANGE_QUERY_HPP
 #define INCLUDE_RANGE_QUERY_HPP
 
-#include <cassert>
 #include <cstdlib>
 
 namespace RB_tree {
