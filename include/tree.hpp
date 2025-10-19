@@ -92,9 +92,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         return iterator(candidate);
     }
 
-    iterator end() const {
-        return iterator(nil_);
-    }
+    iterator end() const { return iterator(nil_); }
 
   private:
     bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent, const KeyT &key) const {
