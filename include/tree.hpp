@@ -1,12 +1,15 @@
 #ifndef INCLUDE_TREE_HPP
 #define INCLUDE_TREE_HPP
 
-#include "iterator.hpp"
-#include "node.hpp"
 #include <cassert>
 #include <fstream>
 #include <functional>
 #include <iostream>
+#include <stack>
+
+#include "iterator.hpp"
+#include "node.hpp"
+
 
 namespace RB_tree {
 
@@ -23,6 +26,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     Tree() : nil_(new Node<KeyT>()), root_(nil_) {}
 
     ~Tree() {
+        std::cout << "destructor\n";
         destroy_subtree(root_);
         delete nil_;
     }
@@ -109,14 +113,34 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         return true;
     }
 
-    void destroy_subtree(Node<KeyT> *node) { // FIXME replace rec to cycle
+    void destroy_subtree(Node<KeyT> *node) {
+        std::cout << "start destroy tree\n";
         if (!node || node->is_nil())
             return;
 
-        destroy_subtree(node->get_left());
-        destroy_subtree(node->get_right());
-        delete node;
+        std::stack<Node<KeyT>*> stack;
+        Node<KeyT> *current = node;
+        Node<KeyT> *last_visited = nullptr;
+
+        while (current || !stack.empty()) {
+            if (current) {
+                stack.push(current);
+                current = current->get_left();
+            } else {
+                Node<KeyT> *peek = stack.top();
+
+                if (peek->get_right() && !peek->get_right()->is_nil() &&
+                    peek->get_right() != last_visited) {
+                    current = peek->get_right();
+                } else {
+                    stack.pop();
+                    delete peek;
+                    last_visited = peek;
+                }
+            }
+        }
     }
+
     void fix_insert(Node<KeyT> *new_node) {
         assert(new_node && !new_node->is_nil());
 
