@@ -4,7 +4,6 @@
 #include <cassert>
 #include <fstream>
 #include <functional>
-#include <iostream>
 #include <stack>
 
 #include "iterator.hpp"
@@ -25,7 +24,6 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     Tree() : nil_(new Node<KeyT>()), root_(nil_) {}
 
     ~Tree() {
-        std::cout << "destructor\n";
         destroy_subtree(root_);
         delete nil_;
     }
@@ -113,30 +111,22 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
     void destroy_subtree(Node<KeyT> *node) {
-        std::cout << "start destroy tree\n";
         if (!node || node->is_nil())
             return;
 
-        std::stack<Node<KeyT> *> stack;
-        Node<KeyT> *current = node;
-        Node<KeyT> *last_visited = nullptr;
+        std::stack<Node<KeyT>*> stack;
+        stack.push(node);
 
-        while (current || !stack.empty()) {
-            if (current) {
-                stack.push(current);
-                current = current->get_left();
-            } else {
-                Node<KeyT> *peek = stack.top();
+        while (!stack.empty()) {
+            Node<KeyT> *current = stack.top();
+            stack.pop();
 
-                if (peek->get_right() && !peek->get_right()->is_nil() &&
-                    peek->get_right() != last_visited) {
-                    current = peek->get_right();
-                } else {
-                    stack.pop();
-                    delete peek;
-                    last_visited = peek;
-                }
-            }
+            if (!current->get_left()->is_nil())
+                stack.push(current->get_left());
+            if (!current->get_right()->is_nil())
+                stack.push(current->get_right());
+
+            delete current;
         }
     }
 
@@ -145,48 +135,38 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         while (new_node->get_parent() &&
                Node<KeyT>::try_get_color(new_node->get_parent()) == Color::red) {
-            auto grand_father = new_node->get_parent()->get_parent();
-            if (new_node->get_parent() == grand_father->get_left()) {
-                auto uncle = grand_father->get_right();
+            auto parent = new_node->get_parent();
+            auto grand_parent = parent->get_parent();
 
-                if (Node<KeyT>::try_get_color(uncle) == Color::red) {
-                    new_node->get_parent()->color_ = Color::black;
-                    if (uncle)
-                        uncle->color_ = Color::black;
+            bool parent_is_left = (parent == grand_parent->get_left());
 
-                    grand_father->color_ = Color::red;
-                    new_node = grand_father;
-                } else {
-                    if (new_node == new_node->get_parent()->get_right()) {
-                        new_node = new_node->get_parent();
-                        left_rotate(new_node);
-                    }
+            auto uncle = parent_is_left ? grand_parent->get_right() : grand_parent->get_left();
 
-                    new_node->get_parent()->color_ = Color::black;
+            if (Node<KeyT>::try_get_color(uncle) == Color::red) {
+                new_node->get_parent()->color_ = Color::black;
+                if (uncle)
+                    uncle->color_ = Color::black;
 
-                    auto grand_father = new_node->get_parent()->get_parent();
-                    grand_father->color_ = Color::red;
-                    right_rotate(grand_father);
-                }
+                grand_parent->color_ = Color::red;
+                new_node = grand_parent;
             } else {
-                auto uncle = grand_father->get_left();
+                if (parent_is_left && new_node == parent->get_right()) {
+                    new_node = parent;
+                    left_rotate(new_node);
+                    parent = new_node->get_parent();
+                } else if (!parent_is_left && new_node == parent->get_left()) {
+                    new_node = parent;
+                    right_rotate(new_node);
+                    parent = new_node->get_parent();
+                }
 
-                if (Node<KeyT>::try_get_color(uncle) == Color::red) {
-                    new_node->get_parent()->color_ = Color::black;
-                    if (uncle)
-                        uncle->color_ = Color::black;
+                parent->color_ = Color::black;
+                grand_parent->color_ = Color::red;
 
-                    grand_father->color_ = Color::red;
-                    new_node = grand_father;
+                if (parent_is_left) {
+                    right_rotate(grand_parent);
                 } else {
-                    if (new_node == new_node->get_parent()->get_left()) {
-                        new_node = new_node->get_parent();
-                        right_rotate(new_node);
-                    }
-
-                    new_node->get_parent()->color_ = Color::black;
-                    grand_father->color_ = Color::red;
-                    left_rotate(grand_father);
+                    left_rotate(grand_parent);
                 }
             }
         }
@@ -195,50 +175,50 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
             root_->color_ = Color::black;
     }
 
-    void right_rotate(Node<KeyT> *node) { // FIXME "двоится в глазах" Постараться убрать копипасту
+    template <typename GetChild, typename SetChild, typename GetOtherChild, typename SetOtherChild>
+    void rotate(Node<KeyT> *node,
+                GetChild get_child,
+                SetChild set_child,
+                GetOtherChild get_other_child,
+                SetOtherChild set_other_child) {
         assert(node);
-        assert(node->get_left());
+        auto child = get_child(node);
+        assert(child && !child->is_nil());
 
-        auto left_node = node->get_left();
-        node->set_left(left_node->get_right());
+        set_child(node, get_other_child(child));
 
-        if (!left_node->get_right()->is_nil())
-            left_node->get_right()->set_parent(node);
+        if (!get_other_child(child)->is_nil())
+            get_other_child(child)->set_parent(node);
 
-        left_node->set_parent(node->get_parent());
+        child->set_parent(node->get_parent());
 
         if (node->get_parent()->is_nil())
-            root_ = left_node;
-        else if (node == node->get_parent()->get_left())
-            node->get_parent()->set_left(left_node);
+            root_ = child;
+        else if (node == get_child(node->get_parent()))
+            set_child(node->get_parent(), child);
         else
-            node->get_parent()->set_right(left_node);
+            set_other_child(node->get_parent(), child);
 
-        left_node->set_right(node);
-        node->set_parent(left_node);
+        set_other_child(child, node);
+        node->set_parent(child);
     }
 
-    void left_rotate(Node<KeyT> *node) {
-        assert(node);
-        assert(node->get_right());
+    void right_rotate(Node<KeyT> * node) {
+        rotate(node,
+            [](Node<KeyT>* n) { return n->get_left(); },
+            [](Node<KeyT>* n, Node<KeyT>* v) { n->set_left(v); },
+            [](Node<KeyT>* n) { return n->get_right(); },
+            [](Node<KeyT>* n, Node<KeyT>* v) { n->set_right(v); }
+        );
+    }
 
-        auto right_node = node->get_right();
-        node->set_right(right_node->get_left());
-
-        if (!right_node->get_left()->is_nil())
-            right_node->get_left()->set_parent(node);
-
-        right_node->set_parent(node->get_parent());
-
-        if (node->get_parent()->is_nil())
-            root_ = right_node;
-        else if (node == node->get_parent()->get_right())
-            node->get_parent()->set_right(right_node);
-        else
-            node->get_parent()->set_left(right_node);
-
-        right_node->set_left(node);
-        node->set_parent(right_node);
+    void left_rotate(Node<KeyT> * node) {
+        rotate(node,
+            [](Node<KeyT>* n) { return n->get_right(); },
+            [](Node<KeyT>* n, Node<KeyT>* v) { n->set_right(v); },
+            [](Node<KeyT>* n) { return n->get_left(); },
+            [](Node<KeyT>* n, Node<KeyT>* v) { n->set_left(v); }
+        );
     }
 
     void dump_graph_list_nodes(const Node<KeyT> *node, std::ofstream &gv) const;
