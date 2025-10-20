@@ -10,7 +10,6 @@
 #include "iterator.hpp"
 #include "node.hpp"
 
-
 namespace RB_tree {
 
 const std::string dump_file_gv = "../dump/graph_dump.gv";   // FIXME delete hardcode
@@ -118,7 +117,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         if (!node || node->is_nil())
             return;
 
-        std::stack<Node<KeyT>*> stack;
+        std::stack<Node<KeyT> *> stack;
         Node<KeyT> *current = node;
         Node<KeyT> *last_visited = nullptr;
 
