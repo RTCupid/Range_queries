@@ -5,8 +5,7 @@
 
 namespace RB_tree {
 
-template <typename It>
-std::size_t distance(It start, It fin) {
+template <typename It> std::size_t distance(It start, It fin) {
     int count = 0;
 
     while (start != fin) {

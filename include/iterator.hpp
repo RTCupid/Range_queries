@@ -7,10 +7,10 @@
 namespace RB_tree {
 
 template <typename KeyT> class Iterator final {
-private:
+  private:
     const Node<KeyT> *node_;
 
-public:
+  public:
     explicit Iterator(const Node<KeyT> *node) noexcept : node_{node} {}
 
     const KeyT &operator*() const {
