@@ -114,7 +114,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         if (!node || node->is_nil())
             return;
 
-        std::stack<Node<KeyT>*> stack;
+        std::stack<Node<KeyT> *> stack;
         stack.push(node);
 
         while (!stack.empty()) {
@@ -176,11 +176,8 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
     template <typename GetChild, typename SetChild, typename GetOtherChild, typename SetOtherChild>
-    void rotate(Node<KeyT> *node,
-                GetChild get_child,
-                SetChild set_child,
-                GetOtherChild get_other_child,
-                SetOtherChild set_other_child) {
+    void rotate(Node<KeyT> *node, GetChild get_child, SetChild set_child,
+                GetOtherChild get_other_child, SetOtherChild set_other_child) {
         assert(node);
         auto child = get_child(node);
         assert(child && !child->is_nil());
@@ -203,22 +200,20 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         node->set_parent(child);
     }
 
-    void right_rotate(Node<KeyT> * node) {
-        rotate(node,
-            [](Node<KeyT>* n) { return n->get_left(); },
-            [](Node<KeyT>* n, Node<KeyT>* v) { n->set_left(v); },
-            [](Node<KeyT>* n) { return n->get_right(); },
-            [](Node<KeyT>* n, Node<KeyT>* v) { n->set_right(v); }
-        );
+    void right_rotate(Node<KeyT> *node) {
+        rotate(
+            node, [](Node<KeyT> *n) { return n->get_left(); },
+            [](Node<KeyT> *n, Node<KeyT> *v) { n->set_left(v); },
+            [](Node<KeyT> *n) { return n->get_right(); },
+            [](Node<KeyT> *n, Node<KeyT> *v) { n->set_right(v); });
     }
 
-    void left_rotate(Node<KeyT> * node) {
-        rotate(node,
-            [](Node<KeyT>* n) { return n->get_right(); },
-            [](Node<KeyT>* n, Node<KeyT>* v) { n->set_right(v); },
-            [](Node<KeyT>* n) { return n->get_left(); },
-            [](Node<KeyT>* n, Node<KeyT>* v) { n->set_left(v); }
-        );
+    void left_rotate(Node<KeyT> *node) {
+        rotate(
+            node, [](Node<KeyT> *n) { return n->get_right(); },
+            [](Node<KeyT> *n, Node<KeyT> *v) { n->set_right(v); },
+            [](Node<KeyT> *n) { return n->get_left(); },
+            [](Node<KeyT> *n, Node<KeyT> *v) { n->set_left(v); });
     }
 
     void dump_graph_list_nodes(const Node<KeyT> *node, std::ofstream &gv) const;
