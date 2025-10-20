@@ -10,8 +10,8 @@
 
 namespace RB_tree {
 
-const std::string dump_file_gv = "../dump/graph_dump.gv";
-const std::string dump_file_svg = "../dump/graph_dump.svg";
+const std::string dump_file_gv = "../dump/graph_dump.gv";   // FIXME delete hardcode
+const std::string dump_file_svg = "../dump/graph_dump.svg"; //
 
 template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
@@ -109,7 +109,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         return true;
     }
 
-    void destroy_subtree(Node<KeyT> *node) {
+    void destroy_subtree(Node<KeyT> *node) { // FIXME replace rec to cycle
         if (!node || node->is_nil())
             return;
 
@@ -172,7 +172,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
             root_->color_ = Color::black;
     }
 
-    void right_rotate(Node<KeyT> *node) {
+    void right_rotate(Node<KeyT> *node) { // FIXME "двоится в глазах" Постараться убрать копипасту
         assert(node);
         assert(node->get_left());
 

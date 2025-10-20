@@ -5,12 +5,10 @@
 
 namespace RB_tree {
 
-template <typename C>
-std::size_t distance(const C &s, typename C::iterator start, typename C::iterator fin) {
+template <typename It> std::size_t distance(It start, It fin) {
     int count = 0;
-    auto end = s.end();
 
-    while (start != fin && start != end) {
+    while (start != fin) {
         ++count;
         ++start;
     }
@@ -28,7 +26,7 @@ template <typename C, typename KeyT> int range_query(const C &s, KeyT fst, KeyT 
     if (start == end)
         return 0;
 
-    return distance(s, start, fin);
+    return distance(start, fin);
 }
 
 } // namespace RB_tree
