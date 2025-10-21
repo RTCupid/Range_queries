@@ -1,6 +1,4 @@
-#include <iostream>
 #include "driver.hpp"
+#include <iostream>
 
-int main() {
-    driver();
-}
+int main() { driver(); }

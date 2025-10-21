@@ -5,7 +5,8 @@
 
 namespace RB_tree {
 
-template <typename C> std::size_t distance(const C &s, typename C::iterator start, typename C::iterator fin) {
+template <typename C>
+std::size_t distance(const C &s, typename C::iterator start, typename C::iterator fin) {
     int count = 0;
 
     while (start != fin) {

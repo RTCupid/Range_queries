@@ -1,26 +1,25 @@
+#include "driver.hpp"
 #include "range_query.hpp"
 #include "tree.hpp"
-#include <iostream>
 #include <chrono>
+#include <iostream>
 #include <set>
-#include "driver.hpp"
 
 using namespace RB_tree;
 
 void driver() {
-    #if TIMING_RUN
+#if TIMING_RUN
     using clock = std::chrono::steady_clock;
     auto t0 = clock::now();
-    #endif
+#endif
 
-    #if RB_TREE_RUN
+#if RB_TREE_RUN
     Tree<int> tree;
-    #endif
+#endif
 
-    #if STD_SET_RUN
+#if STD_SET_RUN
     std::set<int> set;
-    #endif
-    
+#endif
 
     char query;
 
@@ -31,34 +30,34 @@ void driver() {
         switch (query) {
         case 'k':
             if (std::cin >> key) {
-                #if RB_TREE_RUN
+#if RB_TREE_RUN
                 tree.insert(key);
-                #endif
+#endif
 
-                #if STD_SET_RUN
+#if STD_SET_RUN
                 set.insert(key);
-                #endif
+#endif
             }
             break;
         case 'q':
             if (std::cin >> fst >> snd) {
-                #if TIMING_RUN
-                    #if RB_TREE_RUN
-                    range_query<Tree<int>, int>(tree, fst, snd);
-                    #endif
+#if TIMING_RUN
+#if RB_TREE_RUN
+                range_query<Tree<int>, int>(tree, fst, snd);
+#endif
 
-                    #if STD_SET_RUN
-                    range_query<std::set<int>, int>(set, fst, snd);
-                    #endif
-                #else
-                    #if RB_TREE_RUN
-                    std::cout << range_query<Tree<int>, int>(tree, fst, snd) << ' ';
-                    #endif
+#if STD_SET_RUN
+                range_query<std::set<int>, int>(set, fst, snd);
+#endif
+#else
+#if RB_TREE_RUN
+                std::cout << range_query<Tree<int>, int>(tree, fst, snd) << ' ';
+#endif
 
-                    #if STD_SET_RUN
-                    std::cout << range_query<std::set<int>, int>(set, fst, snd) << ' ';
-                    #endif
-                #endif
+#if STD_SET_RUN
+                std::cout << range_query<std::set<int>, int>(set, fst, snd) << ' ';
+#endif
+#endif
             }
             break;
         default:
@@ -66,11 +65,11 @@ void driver() {
         }
     }
 
-    #if TIMING_RUN
+#if TIMING_RUN
     auto t1 = clock::now();
     double msf = std::chrono::duration<double, std::milli>(t1 - t0).count();
     std::cout << "Total time: " << msf << " ms";
-    #endif
+#endif
 
     std::cout << std::endl;
 }
