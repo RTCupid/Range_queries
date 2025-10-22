@@ -6,6 +6,8 @@ aux_source_directory(./src SRC_LIST)
 
 add_executable(node ${SRC_LIST})
 
+target_include_directories(node PRIVATE ${PROJECT_SOURCE_DIR}/include)
+
 target_link_libraries(node
     PRIVATE GTest::gtest
     PRIVATE GTest::gtest_main

@@ -39,3 +39,7 @@ done
 
 echo "------------"
 printf "Passed %d/%d\n" "$pass" "$total"
+
+if (( pass != total )); then
+  exit 1
+fi
