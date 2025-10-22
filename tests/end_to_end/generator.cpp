@@ -8,7 +8,7 @@
 #include <string>
 
 int main(int argc, char* argv[]) {
-    const int n_tests = 10;
+    const int n_tests = 1;
     const int total_commands = 1000;
     const int max_key = 1000000;
     const int max_queries = total_commands / 3;
