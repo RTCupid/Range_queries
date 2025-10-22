@@ -52,7 +52,7 @@ The following cmake flags are implemented for selecting the data structure and m
 | ------------- | ------------------------------- | ------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `RB_TREE_RUN` | bool: `ON`/`OFF` | `ON`    | Enables the implementation based on a custom Red-Black tree | Compiles and executes code sections under `#if RB_TREE_RUN`     |
 | `STD_SET_RUN` | bool: `ON`/`OFF` | `OFF`   | Enables the implementation using `std::set`                 | Compiles and executes code sections under `#if STD_SET_RUN`     |
-| `TIMING_RUN`  | bool: `ON`/`OFF` | `ON`    | Enables timing output (performance measurement)             | Activates timing-related output or logic under `#if TIMING_RUN` |
+| `TIMING_RUN`  | bool: `ON`/`OFF` | `OFF`    | Enables timing output (performance measurement)             | Activates timing-related output or logic under `#if TIMING_RUN` |
 
 
 ## Task Range Queries
