@@ -23,6 +23,11 @@ void driver() {
 
     char query;
 
+#if TIMING_RUN
+    using clock = std::chrono::steady_clock;
+    auto t0 = clock::now();
+#endif
+
     while (std::cin >> query) {
         int key;
         int fst, snd;

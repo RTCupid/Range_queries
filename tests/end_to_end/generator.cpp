@@ -8,8 +8,12 @@
 #include <string>
 
 int main(int argc, char* argv[]) {
-    const int n_tests = 1;
-    const int total_commands = 1000;
+    if (argc != 3) {
+        std::cerr << "generator: expected 3 params in argc and got " << argc << '\n';
+        return EXIT_FAILURE;
+    }
+    const int n_tests = atoi(argv[1]);
+    const int total_commands = atoi(argv[2]);
     const int max_key = 1000000;
     const int max_queries = total_commands / 3;
 
@@ -64,10 +68,12 @@ int main(int argc, char* argv[]) {
                     }
                 }
 
-                answ_file << count << "\n";
+                answ_file << count << " ";
                 ++query_count;
             }
         }
+
+        answ_file << '\n';
 
         data_file.close();
         answ_file.close();
