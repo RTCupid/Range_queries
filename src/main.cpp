@@ -47,19 +47,19 @@ static void driver() {
             if (std::cin >> fst >> snd) {
 #if TIMING_RUN
 #if RB_TREE_RUN
-                range_query<Tree<int>, int>(tree, fst, snd);
+                range_query(tree, fst, snd);
 #endif
 
 #if STD_SET_RUN
-                range_query<std::set<int>, int>(set, fst, snd);
+                range_query(set, fst, snd);
 #endif
 #else
 #if RB_TREE_RUN
-                std::cout << range_query<Tree<int>, int>(tree, fst, snd) << ' ';
+                std::cout << range_query(tree, fst, snd) << ' ';
 #endif
 
 #if STD_SET_RUN
-                std::cout << range_query<std::set<int>, int>(set, fst, snd) << ' ';
+                std::cout << range_query(set, fst, snd) << ' ';
 #endif
 #endif
             }
