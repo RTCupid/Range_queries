@@ -5,6 +5,7 @@ include(GoogleTest)
 add_executable(generator generator.cpp)
 
 target_link_libraries(generator
+    PRIVATE range_queries::headers
     PRIVATE GTest::gtest
     PRIVATE GTest::gtest_main
     PRIVATE Threads::Threads
