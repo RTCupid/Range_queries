@@ -45,27 +45,21 @@ static void driver() {
             break;
         case 'q':
             if (std::cin >> fst >> snd) {
-#if TIMING_RUN
+                std::size_t result = 0;
 #if RB_TREE_RUN
-                range_query(tree, fst, snd);
+                result = range_query(tree, fst, snd);
+#endif
+#if STD_SET_RUN
+                result = range_query(set, fst, snd);
 #endif
 
-#if STD_SET_RUN
-                range_query(set, fst, snd);
-#endif
-#else
-#if RB_TREE_RUN
-                std::cout << range_query(tree, fst, snd) << ' ';
-#endif
-
-#if STD_SET_RUN
-                std::cout << range_query(set, fst, snd) << ' ';
-#endif
+#if !TIMING_RUN
+                std::cout << result << ' ';
 #endif
             }
             break;
         default:
-            std::cout << "unknown command\n";
+            std::cerr << "unknown command\n";
         }
     }
 
