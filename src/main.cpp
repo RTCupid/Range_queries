@@ -77,4 +77,3 @@ static void driver() {
 
     std::cout << std::endl;
 }
-
