@@ -4,7 +4,7 @@ SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)
 DATA_DIR="$SCRIPT_DIR/data"
 ANSW_DIR="$SCRIPT_DIR/answ"
-PROG="$ROOT_DIR/build/Range_queries"
+PROG="$ROOT_DIR/build/Range_queries_rb_tree"
 
 pass=0
 total=0

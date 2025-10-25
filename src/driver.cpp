@@ -8,10 +8,6 @@
 using namespace RB_tree;
 
 void driver() {
-#if TIMING_RUN
-    using clock = std::chrono::steady_clock;
-    auto t0 = clock::now();
-#endif
 
 #if RB_TREE_RUN
     Tree<int> tree;
