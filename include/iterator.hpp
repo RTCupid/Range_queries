@@ -58,7 +58,6 @@ template <typename KeyT> class Iterator final {
     }
 
     bool operator==(const Iterator &it) const { return node_ == it.node_; }
-    bool operator!=(const Iterator &it) const { return !(*this == it); }
 };
 
 } // namespace RB_tree
