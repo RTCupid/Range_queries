@@ -6,7 +6,7 @@
 
 namespace RB_tree {
 
-enum class Color { red, black };
+enum class Color : bool{ red, black };
 
 template <typename KeyT> class Node {
   private:
@@ -55,7 +55,7 @@ template <typename KeyT> class Node {
         return n ? n->color_ : Color::black;
     };
 
-    bool is_nil() const { return this == parent_; }
+    bool is_nil() const noexcept{ return this == parent_; }
 };
 
 } // namespace RB_tree
