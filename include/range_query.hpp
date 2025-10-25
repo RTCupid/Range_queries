@@ -16,16 +16,16 @@ std::size_t distance(const C &s, typename C::iterator start, typename C::iterato
     return count;
 }
 
-template <typename C, typename KeyT> int range_query(const C &s, const KeyT& fst, const KeyT& snd) {
+template <typename C, typename KeyT> int range_query(const C &s, const KeyT &fst, const KeyT &snd) {
     if (fst > snd)
         return 0;
 
     auto start = s.lower_bound(fst);
     auto end = s.end();
-    
+
     if (start == end)
         return 0;
-    
+
     auto fin = s.upper_bound(snd);
 
     return distance(s, start, fin);
