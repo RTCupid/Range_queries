@@ -17,6 +17,5 @@ target_link_libraries(node
 )
 
 gtest_discover_tests(node
-    DISCOVERY_MODE POST_BUILD
     PROPERTIES LABELS "unit"
 )          

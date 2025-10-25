@@ -19,7 +19,6 @@ add_library(range_queries::headers ALIAS range_queries_headers)
 
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_SOURCE_DIR}/src/driver.cpp
 )
 
 add_executable(${RB_TREE} ${SOURCES})
