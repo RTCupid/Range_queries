@@ -11,14 +11,21 @@ template <typename KeyT> class Iterator final {
     const Node<KeyT> *node_;
 
   public:
-    explicit Iterator(const Node<KeyT> *node) noexcept : node_{node} {}
 
-    const KeyT &operator*() const {
+    using value_type      = KeyT;
+    using size_type       = std::size_t;
+    using difference_type = std::ptrdiff_t;
+    using reference       = const value_type &;
+    using pointer         = const value_type *;
+
+    Iterator(const Node<KeyT> *node) noexcept : node_{node} {}
+
+    reference operator*() const {
         assert(node_);
         return node_->get_key();
     }
 
-    const KeyT *operator->() const {
+    pointer operator->() const {
         assert(node_);
         return &node_->get_key();
     }
@@ -56,6 +63,10 @@ template <typename KeyT> class Iterator final {
         }
         return *this;
     }
+
+    Iterator operator++(int) { auto tmp = *this; ++(*this); return tmp; }
+    Iterator operator--(int) { auto tmp = *this; --(*this); return tmp; }
+
 
     bool operator==(const Iterator &it) const { return node_ == it.node_; }
 };

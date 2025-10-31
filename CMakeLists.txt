@@ -21,38 +21,19 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/src/main.cpp
 )
 
-add_executable(${RB_TREE} ${SOURCES})
-target_link_libraries(${RB_TREE} PRIVATE range_queries::headers)
-target_compile_definitions(${RB_TREE} PRIVATE
-    STD_SET_RUN=0
-    RB_TREE_RUN=1
-    TIMING_RUN=0
-)
+function(add_range_query_executable TARGET_NAME SOURCES_VAR)
+    set(DEFINITIONS ${ARGN})
+    add_executable(${TARGET_NAME} ${${SOURCES_VAR}})
+    target_link_libraries(${TARGET_NAME} PRIVATE range_queries::headers)
+    if(DEFINITIONS)
+        target_compile_definitions(${TARGET_NAME} PRIVATE ${DEFINITIONS})
+    endif()
+endfunction()
 
-add_executable(${RB_TREE_TIME} ${SOURCES})
-target_link_libraries(${RB_TREE_TIME} PRIVATE range_queries::headers)
-target_compile_definitions(${RB_TREE_TIME} PRIVATE
-    STD_SET_RUN=0
-    RB_TREE_RUN=1
-    TIMING_RUN=1
-)
-
-add_executable(${STD_SET} ${SOURCES})
-target_link_libraries(${STD_SET} PRIVATE range_queries::headers)
-target_compile_definitions(${STD_SET} PRIVATE
-    STD_SET_RUN=1
-    RB_TREE_RUN=0
-    TIMING_RUN=0
-)
-
-add_executable(${STD_SET_TIME} ${SOURCES})
-target_link_libraries(${STD_SET_TIME} PRIVATE range_queries::headers)
-target_compile_definitions(${STD_SET_TIME} PRIVATE
-    STD_SET_RUN=1
-    RB_TREE_RUN=0
-    TIMING_RUN=1
-)
-
+add_range_query_executable(${RB_TREE} SOURCES RB_TREE_RUN)
+add_range_query_executable(${RB_TREE_TIME} SOURCES RB_TREE_RUN TIMING_RUN)
+add_range_query_executable(${STD_SET} SOURCES STD_SET_RUN)
+add_range_query_executable(${STD_SET_TIME} SOURCES STD_SET_RUN TIMING_RUN)
 
 enable_testing()
 add_subdirectory(tests)

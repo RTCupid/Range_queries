@@ -9,6 +9,8 @@
 #include "iterator.hpp"
 #include "node.hpp"
 
+// TODO create begin & end
+
 namespace RB_tree {
 
 const std::string dump_file_gv = "../dump/graph_dump.gv";   // FIXME delete hardcode
@@ -18,10 +20,11 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
     Node<KeyT> *nil_;
     Node<KeyT> *root_;
+    Node<KeyT>* begin_node; 
     Compare comp_;
 
   public:
-    Tree() : nil_(new Node<KeyT>()), root_(nil_) {}
+    Tree() : nil_(new Node<KeyT>()), root_(nil_), begin_node(nil_) {}
 
     ~Tree() {
         destroy_subtree(root_);
@@ -58,10 +61,30 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         fix_insert(new_node);
 
+        if (begin_node->is_nil() || comp_(key, begin_node->get_key())) {
+            begin_node = new_node;
+        }
+
         return true;
     }
 
     using iterator = RB_tree::Iterator<KeyT>;
+
+    iterator begin() {
+        return begin_node;
+    }
+
+    iterator begin() const {
+        return begin_node;
+    }
+
+    iterator end() {
+        return nil_;
+    }
+
+    iterator end() const{
+        return nil_;
+    }
 
     iterator lower_bound(const KeyT &key) const {
         const Node<KeyT> *candidate = nil_;
@@ -75,7 +98,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
                 current = current->get_left();
             }
         }
-        return iterator(candidate);
+        return candidate;
     }
 
     iterator upper_bound(const KeyT &key) const {
@@ -90,13 +113,11 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
                 current = current->get_right();
             }
         }
-        return iterator(candidate);
+        return candidate;
     }
 
-    iterator end() const { return iterator(nil_); }
-
   private:
-    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent, const KeyT &key) const {
+    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent, const KeyT &key) const { //NOTE comment it
         while (!current->is_nil()) {
             parent = current;
 
@@ -130,7 +151,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         }
     }
 
-    void fix_insert(Node<KeyT> *new_node) {
+    void fix_insert(Node<KeyT> *new_node) { //TODO split 
         assert(new_node && !new_node->is_nil());
 
         while (new_node->get_parent() &&
@@ -227,7 +248,7 @@ template <typename KeyT, typename Compare> void Tree<KeyT, Compare>::dump_graph(
 
     gv << "digraph G {\n"
        << "    rankdir=TB;\n"
-       << "    node [style=filled, fontname=\"Helvetica\", fontcolor=darkblue, "
+       << "    node [style=filled, // FIXME delete hardcodefontname=\"Helvetica\", fontcolor=darkblue, "
           "fillcolor=peachpuff, color=\"#252A34\", penwidth=2.5];\n"
        << "    bgcolor=\"lemonchiffon\";\n\n";
 

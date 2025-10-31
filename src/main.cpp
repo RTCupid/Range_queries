@@ -4,25 +4,27 @@
 #include <iostream>
 #include <set>
 
+// TODO chech input data !!!
+
 using namespace RB_tree;
 
 static void driver();
 
-int main() { driver(); }
+int main() { driver(); } // TODO catch exceptions
 
 static void driver() {
 
-#if RB_TREE_RUN
+#ifdef RB_TREE_RUN
     Tree<int> tree;
 #endif
 
-#if STD_SET_RUN
+#ifdef STD_SET_RUN
     std::set<int> set;
 #endif
 
     char query;
 
-#if TIMING_RUN
+#ifdef TIMING_RUN
     using clock = std::chrono::steady_clock;
     auto t0 = clock::now();
 #endif
@@ -34,11 +36,11 @@ static void driver() {
         switch (query) {
         case 'k':
             if (std::cin >> key) {
-#if RB_TREE_RUN
+#ifdef RB_TREE_RUN
                 tree.insert(key);
 #endif
 
-#if STD_SET_RUN
+#ifdef STD_SET_RUN
                 set.insert(key);
 #endif
             }
@@ -46,14 +48,14 @@ static void driver() {
         case 'q':
             if (std::cin >> fst >> snd) {
                 std::size_t result = 0;
-#if RB_TREE_RUN
+#ifdef RB_TREE_RUN
                 result = range_query(tree, fst, snd);
 #endif
-#if STD_SET_RUN
+#ifdef STD_SET_RUN
                 result = range_query(set, fst, snd);
 #endif
 
-#if !TIMING_RUN
+#ifndef TIMING_RUN
                 std::cout << result << ' ';
 #endif
             }
@@ -63,7 +65,7 @@ static void driver() {
         }
     }
 
-#if TIMING_RUN
+#ifdef TIMING_RUN
     auto t1 = clock::now();
     double msf = std::chrono::duration<double, std::milli>(t1 - t0).count();
     std::cout << "Total time: " << msf << " ms";
