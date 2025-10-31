@@ -46,7 +46,7 @@ template <typename KeyT> class Node {
     [[nodiscard]] const Node *get_left() const noexcept { return left_; }
     [[nodiscard]] const Node *get_right() const noexcept { return right_; }
 
-    [[nodiscard]] const KeyT &get_key() const noexcept {
+    [[nodiscard]] const KeyT &get_key() const {
         assert(key_.has_value());
         return key_;
     }

@@ -5,16 +5,36 @@
 #include <fstream>
 #include <functional>
 #include <stack>
-
+#include <filesystem>
+#include <fstream>
 #include "iterator.hpp"
 #include "node.hpp"
 
-// TODO create begin & end
+struct Dump_paths {
+    std::filesystem::path gv;
+    std::filesystem::path svg;
+};
+
+inline std::filesystem::path default_dump_dir() {
+    if (const char* p = std::getenv("DUMP_DIR"); p && *p) 
+        return std::filesystem::path(p);
+
+    std::error_code ec;
+    auto cwd = std::filesystem::current_path(ec);
+    if (!ec) return cwd / "dump";
+
+    return std::filesystem::temp_directory_path() / "dump"; 
+}
+
+inline Dump_paths make_dump_paths(std::string_view basename = "graph_dump",
+                               std::filesystem::path base = default_dump_dir())
+{
+    std::filesystem::create_directories(base);
+    std::string s(basename);
+    return { base / (s + ".gv"), base / (s + ".svg") };
+}
 
 namespace RB_tree {
-
-const std::string dump_file_gv = "../dump/graph_dump.gv";   // FIXME delete hardcode
-const std::string dump_file_svg = "../dump/graph_dump.svg"; //
 
 template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
@@ -242,13 +262,17 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 };
 
 template <typename KeyT, typename Compare> void Tree<KeyT, Compare>::dump_graph() const {
-    std::ofstream gv(dump_file_gv);
+    const auto paths = make_dump_paths();
+    const std::string gv_file = paths.gv.string();
+    const std::string svg_file = paths.svg.string();
+
+    std::ofstream gv(gv_file);
     if (!gv)
         throw std::runtime_error("open gv file - error");
 
     gv << "digraph G {\n"
        << "    rankdir=TB;\n"
-       << "    node [style=filled, // FIXME delete hardcodefontname=\"Helvetica\", fontcolor=darkblue, "
+       << "    node [style=filled, fontname=\"Helvetica\", fontcolor=darkblue, "
           "fillcolor=peachpuff, color=\"#252A34\", penwidth=2.5];\n"
        << "    bgcolor=\"lemonchiffon\";\n\n";
 
@@ -259,7 +283,7 @@ template <typename KeyT, typename Compare> void Tree<KeyT, Compare>::dump_graph(
     gv << "}\n";
     gv.close();
 
-    std::system(("dot " + dump_file_gv + " -Tsvg -o " + dump_file_svg).c_str());
+    std::system(("dot " + gv_file + " -Tsvg -o " + svg_file).c_str());
 }
 
 template <typename KeyT, typename Compare>
