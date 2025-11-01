@@ -46,9 +46,7 @@ template <typename KeyT> class Node {
     [[nodiscard]] const Node *get_left() const noexcept { return left_; }
     [[nodiscard]] const Node *get_right() const noexcept { return right_; }
 
-    [[nodiscard]] const KeyT &get_key() const {
-        return key_;
-    }
+    [[nodiscard]] const KeyT &get_key() const { return key_; }
 
     static Color try_get_color(const Node<KeyT> *n) noexcept {
         return n ? n->color_ : Color::black;
