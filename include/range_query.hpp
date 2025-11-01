@@ -17,15 +17,14 @@ typename std::iterator_traits<It>::difference_type my_distance(It start, It fin)
     return count;
 }
 
-
-template <typename C, typename KeyT> 
-std::iterator_traits<typename C::iterator>::difference_type 
-range_query(const C &s, const KeyT& fst, const KeyT& snd) {
+template <typename C, typename KeyT>
+std::iterator_traits<typename C::iterator>::difference_type range_query(const C &s, const KeyT &fst,
+                                                                        const KeyT &snd) {
     if (fst > snd)
         return 0;
 
     auto start = s.lower_bound(fst);
-    
+
     auto fin = s.upper_bound(snd);
 
     return my_distance(start, fin);
@@ -34,4 +33,3 @@ range_query(const C &s, const KeyT& fst, const KeyT& snd) {
 } // namespace RB_tree
 
 #endif // INCLUDE_RANGE_QUERY_HPP
-

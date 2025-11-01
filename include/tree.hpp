@@ -1,14 +1,13 @@
 #ifndef INCLUDE_TREE_HPP
 #define INCLUDE_TREE_HPP
 
+#include "iterator.hpp"
+#include "node.hpp"
 #include <cassert>
+#include <filesystem>
 #include <fstream>
 #include <functional>
 #include <stack>
-#include <filesystem>
-#include <fstream>
-#include "iterator.hpp"
-#include "node.hpp"
 
 struct Dump_paths {
     std::filesystem::path gv;
@@ -16,22 +15,22 @@ struct Dump_paths {
 };
 
 inline std::filesystem::path default_dump_dir() {
-    if (const char* p = std::getenv("DUMP_DIR"); p && *p) 
+    if (const char *p = std::getenv("DUMP_DIR"); p && *p)
         return std::filesystem::path(p);
 
     std::error_code ec;
     auto cwd = std::filesystem::current_path(ec);
-    if (!ec) return cwd / "dump";
+    if (!ec)
+        return cwd / "dump";
 
-    return std::filesystem::temp_directory_path() / "dump"; 
+    return std::filesystem::temp_directory_path() / "dump";
 }
 
 inline Dump_paths make_dump_paths(std::string_view basename = "graph_dump",
-                               std::filesystem::path base = default_dump_dir())
-{
+                                  std::filesystem::path base = default_dump_dir()) {
     std::filesystem::create_directories(base);
     std::string s(basename);
-    return { base / (s + ".gv"), base / (s + ".svg") };
+    return {base / (s + ".gv"), base / (s + ".svg")};
 }
 
 namespace RB_tree {
@@ -40,7 +39,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
     Node<KeyT> *nil_;
     Node<KeyT> *root_;
-    Node<KeyT>* begin_node; 
+    Node<KeyT> *begin_node;
     Compare comp_;
 
   public:
@@ -90,21 +89,13 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
     using iterator = RB_tree::Iterator<KeyT>;
 
-    iterator begin() {
-        return begin_node;
-    }
+    iterator begin() { return begin_node; }
 
-    iterator begin() const {
-        return begin_node;
-    }
+    iterator begin() const { return begin_node; }
 
-    iterator end() {
-        return nil_;
-    }
+    iterator end() { return nil_; }
 
-    iterator end() const{
-        return nil_;
-    }
+    iterator end() const { return nil_; }
 
     iterator lower_bound(const KeyT &key) const {
         const Node<KeyT> *candidate = nil_;
@@ -137,7 +128,8 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
   private:
-    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent, const KeyT &key) const { //NOTE comment it
+    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent,
+                      const KeyT &key) const { // NOTE comment it
         while (!current->is_nil()) {
             parent = current;
 
@@ -171,7 +163,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         }
     }
 
-    void fix_insert(Node<KeyT> *new_node) { //TODO split 
+    void fix_insert(Node<KeyT> *new_node) { // TODO split
         assert(new_node && !new_node->is_nil());
 
         while (new_node->get_parent() &&
