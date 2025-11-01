@@ -6,24 +6,34 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp 
-                                ${CMAKE_SOURCE_DIR}/src/driver.cpp)
+set(STD_SET Range_queries_std_set)
+set(RB_TREE Range_queries_rb_tree)
+set(STD_SET_TIME Range_queries_std_set_time)
+set(RB_TREE_TIME Range_queries_rb_tree_time)
 
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+add_library(range_queries_headers INTERFACE)
+target_include_directories(range_queries_headers
+    INTERFACE ${CMAKE_SOURCE_DIR}/include
+)
+add_library(range_queries::headers ALIAS range_queries_headers)
+
+set(SOURCES
+    ${CMAKE_SOURCE_DIR}/src/main.cpp
+)
+
+function(add_range_query_executable TARGET_NAME SOURCES_VAR)
+    set(DEFINITIONS ${ARGN})
+    add_executable(${TARGET_NAME} ${${SOURCES_VAR}})
+    target_link_libraries(${TARGET_NAME} PRIVATE range_queries::headers)
+    if(DEFINITIONS)
+        target_compile_definitions(${TARGET_NAME} PRIVATE ${DEFINITIONS})
+    endif()
+endfunction()
+
+add_range_query_executable(${RB_TREE} SOURCES RB_TREE_RUN)
+add_range_query_executable(${RB_TREE_TIME} SOURCES RB_TREE_RUN TIMING_RUN)
+add_range_query_executable(${STD_SET} SOURCES STD_SET_RUN)
+add_range_query_executable(${STD_SET_TIME} SOURCES STD_SET_RUN TIMING_RUN)
 
 enable_testing()
 add_subdirectory(tests)
-
-option(RB_TREE_RUN "run red blue tree" ON)
-option(STD_SET_RUN "run std::set" OFF)
-option(TIMING_RUN "run timing" OFF)
-
-message(STATUS "RB_TREE_RUN = ${RB_TREE_RUN}")
-message(STATUS "STD_SET_RUN = ${STD_SET_RUN}")
-message(STATUS "TIMING_RUN  = ${TIMING_RUN}")
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-  RB_TREE_RUN=$<IF:$<BOOL:${RB_TREE_RUN}>,1,0>
-  STD_SET_RUN=$<IF:$<BOOL:${STD_SET_RUN}>,1,0>
-  TIMING_RUN=$<IF:$<BOOL:${TIMING_RUN}>,1,0>
-)

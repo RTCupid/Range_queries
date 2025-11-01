@@ -6,14 +6,14 @@
 
 namespace RB_tree {
 
-enum class Color { red, black };
+enum class Color : bool { red, black };
 
 template <typename KeyT> class Node {
   private:
     Node *parent_{nullptr};
     Node *left_{nullptr};
     Node *right_{nullptr};
-    std::optional<KeyT> key_{};
+    KeyT key_;
 
   public:
     Color color_{Color::red};
@@ -25,7 +25,7 @@ template <typename KeyT> class Node {
     ~Node() = default;
 
     /// constructor for nil-sentinel
-    Node() : parent_(this), left_(this), right_(this), key_(std::nullopt), color_(Color::black) {}
+    Node() : parent_(this), left_(this), right_(this), key_(), color_(Color::black) {}
 
     explicit Node(const KeyT &key, Color color = Color::red) : key_(key), color_(color) {}
     explicit Node(KeyT &&key, Color color = Color::red) : key_(std::move(key)), color_(color) {}
@@ -46,16 +46,13 @@ template <typename KeyT> class Node {
     [[nodiscard]] const Node *get_left() const noexcept { return left_; }
     [[nodiscard]] const Node *get_right() const noexcept { return right_; }
 
-    [[nodiscard]] const KeyT &get_key() const noexcept {
-        assert(key_.has_value());
-        return key_.value();
-    }
+    [[nodiscard]] const KeyT &get_key() const { return key_; }
 
     static Color try_get_color(const Node<KeyT> *n) noexcept {
         return n ? n->color_ : Color::black;
     };
 
-    bool is_nil() const { return this == parent_; }
+    bool is_nil() const noexcept { return this == parent_; }
 };
 
 } // namespace RB_tree

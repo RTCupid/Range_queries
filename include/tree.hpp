@@ -1,27 +1,49 @@
 #ifndef INCLUDE_TREE_HPP
 #define INCLUDE_TREE_HPP
 
+#include "iterator.hpp"
+#include "node.hpp"
 #include <cassert>
+#include <filesystem>
 #include <fstream>
 #include <functional>
 #include <stack>
 
-#include "iterator.hpp"
-#include "node.hpp"
+struct Dump_paths {
+    std::filesystem::path gv;
+    std::filesystem::path svg;
+};
+
+inline std::filesystem::path default_dump_dir() {
+    if (const char *p = std::getenv("DUMP_DIR"); p && *p)
+        return std::filesystem::path(p);
+
+    std::error_code ec;
+    auto cwd = std::filesystem::current_path(ec);
+    if (!ec)
+        return cwd / "dump";
+
+    return std::filesystem::temp_directory_path() / "dump";
+}
+
+inline Dump_paths make_dump_paths(std::string_view basename = "graph_dump",
+                                  std::filesystem::path base = default_dump_dir()) {
+    std::filesystem::create_directories(base);
+    std::string s(basename);
+    return {base / (s + ".gv"), base / (s + ".svg")};
+}
 
 namespace RB_tree {
-
-const std::string dump_file_gv = "../dump/graph_dump.gv";   // FIXME delete hardcode
-const std::string dump_file_svg = "../dump/graph_dump.svg"; //
 
 template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
   private:
     Node<KeyT> *nil_;
     Node<KeyT> *root_;
+    Node<KeyT> *begin_node;
     Compare comp_;
 
   public:
-    Tree() : nil_(new Node<KeyT>()), root_(nil_) {}
+    Tree() : nil_(new Node<KeyT>()), root_(nil_), begin_node(nil_) {}
 
     ~Tree() {
         destroy_subtree(root_);
@@ -58,10 +80,22 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         fix_insert(new_node);
 
+        if (begin_node->is_nil() || comp_(key, begin_node->get_key())) {
+            begin_node = new_node;
+        }
+
         return true;
     }
 
     using iterator = RB_tree::Iterator<KeyT>;
+
+    iterator begin() { return begin_node; }
+
+    iterator begin() const { return begin_node; }
+
+    iterator end() { return nil_; }
+
+    iterator end() const { return nil_; }
 
     iterator lower_bound(const KeyT &key) const {
         const Node<KeyT> *candidate = nil_;
@@ -75,7 +109,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
                 current = current->get_left();
             }
         }
-        return iterator(candidate);
+        return candidate;
     }
 
     iterator upper_bound(const KeyT &key) const {
@@ -90,13 +124,12 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
                 current = current->get_right();
             }
         }
-        return iterator(candidate);
+        return candidate;
     }
 
-    iterator end() const { return iterator(nil_); }
-
   private:
-    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent, const KeyT &key) const {
+    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent,
+                      const KeyT &key) const { // NOTE comment it
         while (!current->is_nil()) {
             parent = current;
 
@@ -130,7 +163,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         }
     }
 
-    void fix_insert(Node<KeyT> *new_node) {
+    void fix_insert(Node<KeyT> *new_node) { // TODO split
         assert(new_node && !new_node->is_nil());
 
         while (new_node->get_parent() &&
@@ -221,7 +254,11 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 };
 
 template <typename KeyT, typename Compare> void Tree<KeyT, Compare>::dump_graph() const {
-    std::ofstream gv(dump_file_gv);
+    const auto paths = make_dump_paths();
+    const std::string gv_file = paths.gv.string();
+    const std::string svg_file = paths.svg.string();
+
+    std::ofstream gv(gv_file);
     if (!gv)
         throw std::runtime_error("open gv file - error");
 
@@ -238,7 +275,7 @@ template <typename KeyT, typename Compare> void Tree<KeyT, Compare>::dump_graph(
     gv << "}\n";
     gv.close();
 
-    std::system(("dot " + dump_file_gv + " -Tsvg -o " + dump_file_svg).c_str());
+    std::system(("dot " + gv_file + " -Tsvg -o " + svg_file).c_str());
 }
 
 template <typename KeyT, typename Compare>

@@ -3,12 +3,12 @@ find_package(GTest REQUIRED)
 include(GoogleTest)
 
 set(SRC_LIST
-    src/node.cpp
+    src/tree.cpp
 )
 
-add_executable(node ${SRC_LIST})
+add_executable(tree ${SRC_LIST})
 
-target_link_libraries(node
+target_link_libraries(tree
     PRIVATE 
         range_queries::headers
         GTest::gtest
@@ -16,6 +16,6 @@ target_link_libraries(node
         Threads::Threads
 )
 
-gtest_discover_tests(node
+gtest_discover_tests(tree
     PROPERTIES LABELS "unit"
 )          
