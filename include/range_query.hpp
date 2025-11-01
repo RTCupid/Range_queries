@@ -6,16 +6,16 @@
 
 namespace RB_tree {
 
-// template <typename It>
-// typename std::iterator_traits<It>::difference_type my_distance(It start, It fin) {
-//     int count = 0;
+template <typename It>
+typename std::iterator_traits<It>::difference_type my_distance(It start, It fin) {
+    int count = 0;
 
-//     while (start != fin) {
-//         ++count;
-//         ++start;
-//     }
-//     return count;
-// }
+    while (start != fin) {
+        ++count;
+        ++start;
+    }
+    return count;
+}
 
 
 template <typename C, typename KeyT> 
@@ -28,7 +28,7 @@ range_query(const C &s, const KeyT& fst, const KeyT& snd) {
     
     auto fin = s.upper_bound(snd);
 
-    return std::distance(start, fin);
+    return my_distance(start, fin);
 }
 
 } // namespace RB_tree
