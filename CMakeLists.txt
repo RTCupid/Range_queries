@@ -35,5 +35,12 @@ add_range_query_executable(${RB_TREE_TIME} SOURCES RB_TREE_RUN TIMING_RUN)
 add_range_query_executable(${STD_SET} SOURCES STD_SET_RUN)
 add_range_query_executable(${STD_SET_TIME} SOURCES STD_SET_RUN TIMING_RUN)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(${RB_TREE} PRIVATE -mllvm -inline-threshold=500)
+    target_compile_options(${RB_TREE_TIME} PRIVATE -mllvm -inline-threshold=500)
+    target_compile_options(${STD_SET} PRIVATE -mllvm -inline-threshold=500)
+    target_compile_options(${STD_SET_TIME} PRIVATE -mllvm -inline-threshold=500)
+endif()
+
 enable_testing()
 add_subdirectory(tests)
