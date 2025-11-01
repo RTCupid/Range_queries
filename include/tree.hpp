@@ -50,9 +50,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         delete nil_;
     }
 
-    Compare key_comp() const {
-        return comp_;
-    }
+    Compare key_comp() const { return comp_; }
 
     Tree(const Tree &) = delete;
     Tree(Tree &&) = default;
