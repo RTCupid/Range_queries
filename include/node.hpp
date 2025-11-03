@@ -26,7 +26,6 @@ template <typename KeyT> class Node {
 
     /// constructor for nil-sentinel
     Node() : parent_(this), left_(this), right_(this), key_(0), color_(Color::black) {}
-    Node() : parent_(this), left_(this), right_(this), key_(0), color_(Color::black) {}
 
     explicit Node(const KeyT &key, Color color = Color::red) : key_(key), color_(color) {}
     explicit Node(KeyT &&key, Color color = Color::red) : key_(std::move(key)), color_(color) {}
