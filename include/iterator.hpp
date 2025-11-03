@@ -2,7 +2,7 @@
 #define INCLUDE_INTERATOR_HPP
 
 #include "node.hpp"
-#include <iterator>
+#include <utility>
 
 namespace RB_tree {
 
@@ -38,8 +38,7 @@ template <typename KeyT> class Iterator final {
         } else {
             auto parent = node_->get_parent();
             while ((!parent->is_nil()) && parent->get_right() == node_) {
-                node_ = parent;
-                parent = node_->get_parent();
+                node_ = std::exchange(parent, parent->get_parent());
             }
             node_ = parent;
         }
@@ -55,8 +54,7 @@ template <typename KeyT> class Iterator final {
         } else {
             auto parent = node_->get_parent();
             while ((!parent->is_nil()) && parent->get_left() == node_) {
-                node_ = parent;
-                parent = node_->get_parent();
+                node_ = std::exchange(parent, parent->get_parent());
             }
             node_ = parent;
         }
@@ -74,7 +72,7 @@ template <typename KeyT> class Iterator final {
         return tmp;
     }
 
-    bool operator==(const Iterator &it) const { return node_ == it.node_; }
+    bool operator==(const Iterator &) const = default;
 };
 
 } // namespace RB_tree

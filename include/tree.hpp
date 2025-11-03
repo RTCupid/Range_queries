@@ -7,7 +7,6 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
-#include <stack>
 
 struct Dump_paths {
     std::filesystem::path gv;
@@ -104,12 +103,10 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         const Node<KeyT> *current = root_;
 
         while (!current->is_nil()) {
-            if (comp_(current->get_key(), key)) {
+            if (comp_(current->get_key(), key))
                 current = current->get_right();
-            } else {
-                candidate = current;
-                current = current->get_left();
-            }
+            else
+                candidate = std::exchange(current, current->get_left());
         }
         return candidate;
     }
@@ -119,12 +116,10 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         const Node<KeyT> *current = root_;
 
         while (!current->is_nil()) {
-            if (comp_(key, current->get_key())) {
-                candidate = current;
-                current = current->get_left();
-            } else {
+            if (comp_(key, current->get_key()))
+                candidate = std::exchange(current, current->get_left());
+            else
                 current = current->get_right();
-            }
         }
         return candidate;
     }
@@ -149,19 +144,30 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         if (!node || node->is_nil())
             return;
 
-        std::stack<Node<KeyT> *> stack;
-        stack.push(node);
+        Node<KeyT> *current = node;
 
-        while (!stack.empty()) {
-            Node<KeyT> *current = stack.top();
-            stack.pop();
+        while (current && !current->is_nil()) {
+            if (current->get_left() && !current->get_left()->is_nil()) {
+                Node<KeyT> *left_child = current->get_left();
+                Node<KeyT> *right_child = current->get_right();
 
-            if (!current->get_left()->is_nil())
-                stack.push(current->get_left());
-            if (!current->get_right()->is_nil())
-                stack.push(current->get_right());
+                if (right_child && !right_child->is_nil()) {
+                    Node<KeyT> *rightmost = left_child;
+                    while (rightmost->get_right() && !rightmost->get_right()->is_nil()) {
+                        rightmost = rightmost->get_right();
+                    }
 
-            delete current;
+                    rightmost->set_right(right_child);
+                }
+
+                Node<KeyT> *to_delete = current;
+                current = left_child;
+                delete to_delete;
+            } else {
+                Node<KeyT> *to_delete = current;
+                current = current->get_right();
+                delete to_delete;
+            }
         }
     }
 
