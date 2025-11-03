@@ -3,7 +3,6 @@
 
 #include <cassert>
 #include <utility>
-#include <utility>
 
 namespace RB_tree {
 
@@ -50,9 +49,7 @@ template <typename KeyT> class Node {
 
     [[nodiscard]] const KeyT &get_key() const { return key_; }
 
-    static Color try_get_color(const Node *n) noexcept {
-        return n ? n->color_ : Color::black;
-    };
+    static Color try_get_color(const Node *n) noexcept { return n ? n->color_ : Color::black; };
 
     bool is_nil() const noexcept { return this == parent_; }
 };

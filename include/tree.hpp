@@ -104,10 +104,10 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         while (!current->is_nil()) {
             if (comp_(current->get_key(), key))
-            if (comp_(current->get_key(), key))
-                current = current->get_right();
-            else
-                candidate = std::exchange(current, current->get_left());
+                if (comp_(current->get_key(), key))
+                    current = current->get_right();
+                else
+                    candidate = std::exchange(current, current->get_left());
             else
                 candidate = std::exchange(current, current->get_left());
         }
@@ -121,8 +121,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         while (!current->is_nil()) {
             if (comp_(key, current->get_key()))
                 candidate = std::exchange(current, current->get_left());
-            else
-            if (comp_(key, current->get_key()))
+            else if (comp_(key, current->get_key()))
                 candidate = std::exchange(current, current->get_left());
             else
                 current = current->get_right();
@@ -166,7 +165,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
                     rightmost->set_right(right_child);
                 }
 
-                Node<KeyT> * to_delete = current;
+                Node<KeyT> *to_delete = current;
                 current = left_child;
                 delete to_delete;
             } else {
