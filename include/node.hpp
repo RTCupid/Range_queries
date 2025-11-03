@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <utility>
+#include <utility>
 
 namespace RB_tree {
 
@@ -26,6 +27,7 @@ template <typename KeyT> class Node {
 
     /// constructor for nil-sentinel
     Node() : parent_(this), left_(this), right_(this), key_(0), color_(Color::black) {}
+    Node() : parent_(this), left_(this), right_(this), key_(0), color_(Color::black) {}
 
     explicit Node(const KeyT &key, Color color = Color::red) : key_(key), color_(color) {}
     explicit Node(KeyT &&key, Color color = Color::red) : key_(std::move(key)), color_(color) {}
@@ -48,7 +50,9 @@ template <typename KeyT> class Node {
 
     [[nodiscard]] const KeyT &get_key() const { return key_; }
 
-    static Color try_get_color(const Node *n) noexcept { return n ? n->color_ : Color::black; };
+    static Color try_get_color(const Node *n) noexcept {
+        return n ? n->color_ : Color::black;
+    };
 
     bool is_nil() const noexcept { return this == parent_; }
 };
