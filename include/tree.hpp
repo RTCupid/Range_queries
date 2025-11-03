@@ -160,7 +160,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
                     rightmost->set_right(right_child);
                 }
 
-                Node<KeyT> * to_delete = current;
+                Node<KeyT> *to_delete = current;
                 current = left_child;
                 delete to_delete;
             } else {
