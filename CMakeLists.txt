@@ -30,8 +30,8 @@ function(add_range_query_executable TARGET_NAME SOURCES_VAR)
     endif()
 endfunction()
 
-add_range_query_executable(${RB_TREE} SOURCES RB_TREE_RUN)
-add_range_query_executable(${RB_TREE_TIME} SOURCES RB_TREE_RUN TIMING_RUN)
+add_range_query_executable(${RB_TREE} SOURCES)
+add_range_query_executable(${RB_TREE_TIME} SOURCES TIMING_RUN)
 add_range_query_executable(${STD_SET} SOURCES STD_SET_RUN)
 add_range_query_executable(${STD_SET_TIME} SOURCES STD_SET_RUN TIMING_RUN)
 

@@ -4,22 +4,18 @@
 #include <iostream>
 #include <set>
 
-// TODO chech input data !!!
-
 using namespace RB_tree;
 
 static void driver();
 
-int main() { driver(); } // TODO catch exceptions
+int main() { driver(); }
 
 static void driver() {
 
-#ifdef RB_TREE_RUN
-    Tree<int> tree;
-#endif
-
 #ifdef STD_SET_RUN
-    std::set<int> set;
+    std::set<int> tree;
+#else
+    Tree<int> tree;
 #endif
 
     char query;
@@ -36,28 +32,24 @@ static void driver() {
         switch (query) {
         case 'k':
             if (std::cin >> key) {
-#ifdef RB_TREE_RUN
                 tree.insert(key);
-#endif
-
-#ifdef STD_SET_RUN
-                set.insert(key);
-#endif
+            } else {
+                std::cerr << "Error: invalid input for 'k' command. Expected integer.\n";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
             break;
         case 'q':
             if (std::cin >> fst >> snd) {
                 std::size_t result = 0;
-#ifdef RB_TREE_RUN
                 result = range_query(tree, fst, snd);
-#endif
-#ifdef STD_SET_RUN
-                result = range_query(set, fst, snd);
-#endif
-
 #ifndef TIMING_RUN
                 std::cout << result << ' ';
 #endif
+            } else {
+                std::cerr << "Error: invalid input for 'q' command. Expected two integers.\n";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
             break;
         default:

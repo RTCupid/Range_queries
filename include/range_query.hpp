@@ -7,10 +7,9 @@
 namespace RB_tree {
 
 template <typename C, typename KeyT>
-std::iterator_traits<typename C::iterator>::difference_type range_query(const C &s, const KeyT &fst,
-                                                                        const KeyT &snd) {
+auto range_query(const C &s, const KeyT &fst, const KeyT &snd) {
     if (!s.key_comp()(fst, snd))
-        return 0;
+        return 0l;
 
     auto start = s.lower_bound(fst);
 
