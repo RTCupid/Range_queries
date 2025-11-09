@@ -8,7 +8,7 @@ namespace RB_tree {
 
 template <typename KeyT> class Iterator final {
   private:
-    const Node<KeyT> *node_;
+    const Node<KeyT> *node_{nullptr};
 
   public:
     using value_type = KeyT;
@@ -16,6 +16,7 @@ template <typename KeyT> class Iterator final {
     using difference_type = std::ptrdiff_t;
     using reference = const value_type &;
     using pointer = const value_type *;
+    using iterator_category = std::bidirectional_iterator_tag; 
 
     Iterator(const Node<KeyT> *node) noexcept : node_{node} {}
 
@@ -26,7 +27,7 @@ template <typename KeyT> class Iterator final {
 
     pointer operator->() const {
         assert(node_);
-        return &node_->get_key();
+        return std::addressof(node_->get_key());
     }
 
     Iterator &operator++() {
@@ -73,6 +74,11 @@ template <typename KeyT> class Iterator final {
     }
 
     bool operator==(const Iterator &) const = default;
+
+    const Node<KeyT>* get() const noexcept {
+        assert(node_);
+        return node_;
+    }
 };
 
 } // namespace RB_tree

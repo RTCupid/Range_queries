@@ -8,8 +8,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(STD_SET Range_queries_std_set)
 set(RB_TREE Range_queries_rb_tree)
+set(RB_TREE_LOG Range_queries_rb_tree_log)
 set(STD_SET_TIME Range_queries_std_set_time)
 set(RB_TREE_TIME Range_queries_rb_tree_time)
+set(RB_TREE_LOG_TIME  Range_queries_rb_tree_log_time)
 
 add_library(range_queries_headers INTERFACE)
 target_include_directories(range_queries_headers
@@ -21,19 +23,27 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/src/main.cpp
 )
 
-function(add_range_query_executable TARGET_NAME SOURCES_VAR)
-    set(DEFINITIONS ${ARGN})
-    add_executable(${TARGET_NAME} ${${SOURCES_VAR}})
+function(add_range_query_executable TARGET_NAME)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs DEFINITIONS)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    add_executable(${TARGET_NAME} ${ARG_UNPARSED_ARGUMENTS})
     target_link_libraries(${TARGET_NAME} PRIVATE range_queries::headers)
-    if(DEFINITIONS)
-        target_compile_definitions(${TARGET_NAME} PRIVATE ${DEFINITIONS})
+
+    if(ARG_DEFINITIONS)
+        target_compile_definitions(${TARGET_NAME} PRIVATE ${ARG_DEFINITIONS})
     endif()
 endfunction()
 
-add_range_query_executable(${RB_TREE} SOURCES)
-add_range_query_executable(${RB_TREE_TIME} SOURCES TIMING_RUN)
-add_range_query_executable(${STD_SET} SOURCES STD_SET_RUN)
-add_range_query_executable(${STD_SET_TIME} SOURCES STD_SET_RUN TIMING_RUN)
+
+add_range_query_executable(${RB_TREE}          ${SOURCES} DEFINITIONS RB_TREE_RUN)
+add_range_query_executable(${RB_TREE_TIME}     ${SOURCES} DEFINITIONS TIMING_RUN)
+add_range_query_executable(${STD_SET}          ${SOURCES} DEFINITIONS STD_SET_RUN)
+add_range_query_executable(${STD_SET_TIME}     ${SOURCES} DEFINITIONS STD_SET_RUN TIMING_RUN)
+# add_range_query_executable(${RB_TREE_LOG}      ${SOURCES} DEFINITIONS RB_TREE_LOG_RUN)
+# add_range_query_executable(${RB_TREE_LOG_TIME} ${SOURCES} DEFINITIONS RB_TREE_LOG_RUN TIMING_RUN)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${RB_TREE} PRIVATE -mllvm -inline-threshold=500)
