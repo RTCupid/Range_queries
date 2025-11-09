@@ -259,6 +259,38 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         }
     }
 
+    void handle_red_uncle_case(Node<KeyT> *&new_node, Node<KeyT> *&uncle,
+                               Node<KeyT> *grand_parent) {
+        new_node->get_parent()->color_ = Color::black;
+        if (uncle)
+            uncle->color_ = Color::black;
+
+        grand_parent->color_ = Color::red;
+        new_node = grand_parent;
+    }
+
+    void handle_black_uncle_case(Node<KeyT> *&new_node, Node<KeyT> *parent,
+                                 Node<KeyT> *grand_parent, bool parent_is_left) {
+        if (parent_is_left && new_node == parent->get_right()) {
+            new_node = parent;
+            left_rotate(new_node);
+            parent = new_node->get_parent();
+        } else if (!parent_is_left && new_node == parent->get_left()) {
+            new_node = parent;
+            right_rotate(new_node);
+            parent = new_node->get_parent();
+        }
+
+        parent->color_ = Color::black;
+        grand_parent->color_ = Color::red;
+
+        if (parent_is_left) {
+            right_rotate(grand_parent);
+        } else {
+            left_rotate(grand_parent);
+        }
+    }
+
     template <typename GetChild, typename SetChild, typename GetOtherChild, typename SetOtherChild>
     void rotate(Node<KeyT> *node, GetChild get_child, SetChild set_child,
                 GetOtherChild get_other_child, SetOtherChild set_other_child) {
