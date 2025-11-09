@@ -3,6 +3,44 @@
 #include <vector>
 #include <algorithm>
 
+TEST(RBTreeMoveTest, MoveConstructor) {
+    RB_tree::Tree<int> t1;
+    t1.insert(5);
+    t1.insert(10);
+
+    RB_tree::Tree<int> t2 = std::move(t1);
+
+    auto it = t2.begin();
+    EXPECT_NE(it, t2.end());
+    EXPECT_EQ(*it, 5);
+    ++it;
+    EXPECT_NE(it, t2.end());
+    EXPECT_EQ(*it, 10);
+    ++it;
+    EXPECT_EQ(it, t2.end());
+
+    EXPECT_EQ(t1.begin(), t1.end());
+}
+
+TEST(RBTreeMoveTest, MoveAssignment) {
+    RB_tree::Tree<int> t1;
+    t1.insert(100);
+
+    RB_tree::Tree<int> t2;
+    t2.insert(1);
+    t2.insert(2);
+
+    t2 = std::move(t1);
+
+    auto it = t2.begin();
+    EXPECT_NE(it, t2.end());
+    EXPECT_EQ(*it, 100);
+    ++it;
+    EXPECT_EQ(it, t2.end());
+
+    EXPECT_EQ(t1.begin(), t1.end());
+}
+
 TEST(RBTreeTest, BeginOnEmptyTree) {
     RB_tree::Tree<int> tree;
     EXPECT_TRUE(tree.begin() == tree.end());
@@ -21,7 +59,6 @@ TEST(RBTreeTest, BeginReturnsMinimum) {
     for (int k : keys) {
         tree.insert(k);
     }
-    // Минимум — 3
     EXPECT_EQ(*tree.begin(), 3);
 }
 
@@ -31,16 +68,15 @@ TEST(RBTreeTest, BeginUpdatesWhenSmallerKeyInserted) {
     tree.insert(20);
     EXPECT_EQ(*tree.begin(), 10);
 
-    tree.insert(5);  // новый минимум
+    tree.insert(5); 
     EXPECT_EQ(*tree.begin(), 5);
 
-    tree.insert(1);  // ещё меньше
+    tree.insert(1);  
     EXPECT_EQ(*tree.begin(), 1);
 }
 
 TEST(RBTreeTest, BeginAfterInsertingInDescendingOrder) {
     RB_tree::Tree<int> tree;
-    // Вставляем 100, 90, 80, ..., 10 — минимум будет 10
     for (int i = 100; i >= 10; i -= 10) {
         tree.insert(i);
     }
@@ -53,8 +89,7 @@ TEST(RBTreeTest, BeginConsistencyWithLowerBound) {
     for (int k : keys) {
         tree.insert(k);
     }
-    // begin() должен совпадать с lower_bound(минимальное_значение)
     auto it1 = tree.begin();
-    auto it2 = tree.lower_bound(0); // 0 < всех ключей → первый >= 0 — это минимум
+    auto it2 = tree.lower_bound(0); 
     EXPECT_TRUE(it1 == it2);
 }
