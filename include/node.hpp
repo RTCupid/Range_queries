@@ -29,7 +29,8 @@ template <typename KeyT> class Node {
     Node() : parent_(this), left_(this), right_(this), color_(Color::black), size_(0) {}
 
     explicit Node(const KeyT &key, Color color = Color::red) : key_(key), color_(color), size_(1) {}
-    explicit Node(KeyT &&key, Color color = Color::red) : key_(std::move(key)), color_(color), size_(1) {}
+    explicit Node(KeyT &&key, Color color = Color::red)
+        : key_(std::move(key)), color_(color), size_(1) {}
 
     [[nodiscard]] bool is_red() const noexcept { return color_ == Color::red; }
     [[nodiscard]] bool is_black() const noexcept { return color_ == Color::black; }

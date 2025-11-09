@@ -16,7 +16,7 @@ template <typename KeyT> class Iterator final {
     using difference_type = std::ptrdiff_t;
     using reference = const value_type &;
     using pointer = const value_type *;
-    using iterator_category = std::bidirectional_iterator_tag; 
+    using iterator_category = std::bidirectional_iterator_tag;
 
     Iterator(const Node<KeyT> *node) noexcept : node_{node} {}
 
@@ -75,7 +75,7 @@ template <typename KeyT> class Iterator final {
 
     bool operator==(const Iterator &) const = default;
 
-    const Node<KeyT>* get() const noexcept {
+    const Node<KeyT> *get() const noexcept {
         assert(node_);
         return node_;
     }

@@ -15,11 +15,11 @@ auto range_query(const C &s, const KeyT &fst, const KeyT &snd) {
 
     auto fin = s.upper_bound(snd);
 
-    //#ifndef RB_TREE_LOG_RUN
+    // #ifndef RB_TREE_LOG_RUN
     return std::distance(start, fin);
-    //#else 
-    //return s.log_distance(start, fin);
-    //#endif
+    // #else
+    // return s.log_distance(start, fin);
+    // #endif
 }
 
 } // namespace RB_tree
