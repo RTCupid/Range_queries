@@ -52,9 +52,30 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     Compare key_comp() const { return comp_; }
 
     Tree(const Tree &) = delete;
-    Tree(Tree &&) = default;
+    Tree(Tree &&other) noexcept
+        : nil_(other.nil_), root_(other.root_), begin_node(other.begin_node),
+          comp_(std::move(other.comp_)) {
+        other.nil_ = nullptr;
+        other.root_ = nullptr;
+        other.begin_node = nullptr;
+    }
     Tree &operator=(const Tree &) = delete;
-    Tree &operator=(Tree &&) = default;
+    Tree &operator=(Tree &&other) noexcept {
+        if (this != &other) {
+            destroy_subtree(root_);
+            delete nil_;
+
+            nil_ = other.nil_;
+            root_ = other.root_;
+            begin_node = other.begin_node;
+            comp_ = std::move(other.comp_);
+
+            other.nil_ = nullptr;
+            other.root_ = nullptr;
+            other.begin_node = nullptr;
+        }
+        return *this;
+    }
 
     void dump_graph() const;
 
@@ -99,7 +120,10 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         while (!current->is_nil()) {
             if (comp_(current->get_key(), key))
-                current = current->get_right();
+                if (comp_(current->get_key(), key))
+                    current = current->get_right();
+                else
+                    candidate = std::exchange(current, current->get_left());
             else
                 candidate = std::exchange(current, current->get_left());
         }
@@ -113,11 +137,15 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         while (!current->is_nil()) {
             if (comp_(key, current->get_key()))
                 candidate = std::exchange(current, current->get_left());
+            else if (comp_(key, current->get_key()))
+                candidate = std::exchange(current, current->get_left());
             else
                 current = current->get_right();
         }
         return candidate;
     }
+
+    iterator::difference_type log_distance(iterator first, iterator last) const; // TODO
 
   private:
     bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent,
@@ -133,6 +161,12 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
                 return false;
         }
         return true;
+    }
+
+    void update_size(Node<KeyT> *node) {
+        if (!node || node->is_nil())
+            return;
+        node->size_ = 1 + node->get_left()->size_ + node->get_right()->size_;
     }
 
     void destroy_subtree(Node<KeyT> *node) {
@@ -187,6 +221,42 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         if (root_)
             root_->color_ = Color::black;
+
+        for (auto p = new_node; !p->is_nil(); p = p->get_parent()) {
+            update_size(p);
+        }
+    }
+
+    void handle_red_uncle_case(Node<KeyT> *&new_node, Node<KeyT> *&uncle,
+                               Node<KeyT> *grand_parent) {
+        new_node->get_parent()->color_ = Color::black;
+        if (uncle)
+            uncle->color_ = Color::black;
+
+        grand_parent->color_ = Color::red;
+        new_node = grand_parent;
+    }
+
+    void handle_black_uncle_case(Node<KeyT> *&new_node, Node<KeyT> *parent,
+                                 Node<KeyT> *grand_parent, bool parent_is_left) {
+        if (parent_is_left && new_node == parent->get_right()) {
+            new_node = parent;
+            left_rotate(new_node);
+            parent = new_node->get_parent();
+        } else if (!parent_is_left && new_node == parent->get_left()) {
+            new_node = parent;
+            right_rotate(new_node);
+            parent = new_node->get_parent();
+        }
+
+        parent->color_ = Color::black;
+        grand_parent->color_ = Color::red;
+
+        if (parent_is_left) {
+            right_rotate(grand_parent);
+        } else {
+            left_rotate(grand_parent);
+        }
     }
 
     void handle_red_uncle_case(Node<KeyT> *&new_node, Node<KeyT> *&uncle,
@@ -244,6 +314,9 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         set_other_child(child, node);
         node->set_parent(child);
+
+        update_size(node);
+        update_size(child);
     }
 
     void right_rotate(Node<KeyT> *node) {
@@ -301,7 +374,7 @@ void Tree<KeyT, Compare>::dump_graph_list_nodes(const Node<KeyT> *node, std::ofs
     gv << "    node_" << node << "[shape=Mrecord; style=filled; fillcolor=" << fillcolor
        << "; color=\"#000000\"; "
           "fontcolor=\"#000000\"; "
-       << "label=\"{ node_" << node << " | key: " << node->get_key()
+       << "label=\"{ node_" << node << " | key: " << node->get_key() << " | size: " << node->size_
        << " | parent: " << node->get_parent() << "| { left: " << node->get_left()
        << " | right: " << node->get_right() << " } }\"" << "];\n";
 

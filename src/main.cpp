@@ -62,6 +62,5 @@ static void driver() {
     double msf = std::chrono::duration<double, std::milli>(t1 - t0).count();
     std::cout << "Total time: " << msf << " ms";
 #endif
-
     std::cout << std::endl;
 }
