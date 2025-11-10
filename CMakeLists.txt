@@ -42,8 +42,8 @@ add_range_query_executable(${RB_TREE}          ${SOURCES} DEFINITIONS RB_TREE_RU
 add_range_query_executable(${RB_TREE_TIME}     ${SOURCES} DEFINITIONS TIMING_RUN)
 add_range_query_executable(${STD_SET}          ${SOURCES} DEFINITIONS STD_SET_RUN)
 add_range_query_executable(${STD_SET_TIME}     ${SOURCES} DEFINITIONS STD_SET_RUN TIMING_RUN)
-# add_range_query_executable(${RB_TREE_LOG}      ${SOURCES} DEFINITIONS RB_TREE_LOG_RUN)
-# add_range_query_executable(${RB_TREE_LOG_TIME} ${SOURCES} DEFINITIONS RB_TREE_LOG_RUN TIMING_RUN)
+add_range_query_executable(${RB_TREE_LOG}      ${SOURCES} DEFINITIONS RB_TREE_LOG_RUN)
+add_range_query_executable(${RB_TREE_LOG_TIME} ${SOURCES} DEFINITIONS RB_TREE_LOG_RUN TIMING_RUN)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${RB_TREE} PRIVATE -mllvm -inline-threshold=500)
