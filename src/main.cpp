@@ -21,8 +21,8 @@ static void driver() {
     char query;
 
 #ifdef TIMING_RUN
+    double msf = 0;
     using clock = std::chrono::steady_clock;
-    auto t0 = clock::now();
 #endif
 
     while (std::cin >> query) {
@@ -42,8 +42,13 @@ static void driver() {
         case 'q':
             if (std::cin >> fst >> snd) {
                 std::size_t result = 0;
+#ifdef TIMING_RUN
+                auto t0 = clock::now();
                 result = range_query(tree, fst, snd);
-#ifndef TIMING_RUN
+                asm volatile ("" : : "r"(result));
+                auto t1 = clock::now();
+                msf += std::chrono::duration<double, std::milli>(t1 - t0).count();
+#else
                 std::cout << result << ' ';
 #endif
             } else {
@@ -58,9 +63,7 @@ static void driver() {
     }
 
 #ifdef TIMING_RUN
-    auto t1 = clock::now();
-    double msf = std::chrono::duration<double, std::milli>(t1 - t0).count();
-    std::cout << "Total time: " << msf << " ms";
+    std::cout << "Total time: " << msf << " ms\n";
 #endif
     std::cout << std::endl;
 }
