@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include <iostream>
 
 struct Dump_paths {
     std::filesystem::path gv;
@@ -120,10 +121,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         while (!current->is_nil()) {
             if (comp_(current->get_key(), key))
-                if (comp_(current->get_key(), key))
-                    current = current->get_right();
-                else
-                    candidate = std::exchange(current, current->get_left());
+                current = current->get_right();
             else
                 candidate = std::exchange(current, current->get_left());
         }
@@ -145,11 +143,32 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         return candidate;
     }
 
-    iterator::difference_type log_distance(iterator first, iterator last) const; // TODO
+    iterator::difference_type log_distance(iterator first, iterator last) const {
+        if (first == last) return 0;
 
-  private:
+        return get_rank(last.get()) - get_rank(first.get());
+    }
+
+private:
+    auto get_rank(const Node<KeyT> *node) const {
+        if (node->is_nil()) return root_->size_;
+
+        auto rank = node->get_left()->size_;
+        auto current = node;
+
+        while (current->get_parent() != nil_) {
+            const auto parent = current->get_parent();
+            if (current == parent->get_right()) {
+                rank += 1 + parent->get_left()->size_;
+            }
+            current = parent;
+        }
+
+        return rank;
+    }
+
     bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent,
-                      const KeyT &key) const { // NOTE comment it
+                      const KeyT &key) const {
         while (!current->is_nil()) {
             parent = current;
 
@@ -164,8 +183,11 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
     void update_size(Node<KeyT> *node) {
-        if (!node || node->is_nil())
+        assert(node);
+        if (node->is_nil()) {
+            node->size_ = 0;
             return;
+        }
         node->size_ = 1 + node->get_left()->size_ + node->get_right()->size_;
     }
 
@@ -200,7 +222,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         }
     }
 
-    void fix_insert(Node<KeyT> *new_node) { // TODO split
+    void fix_insert(Node<KeyT> *new_node) {
         assert(new_node && !new_node->is_nil());
 
         while (new_node->get_parent() &&
@@ -234,6 +256,11 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
             uncle->color_ = Color::black;
 
         grand_parent->color_ = Color::red;
+
+        update_size(new_node->get_parent());
+        update_size(uncle);
+        update_size(grand_parent);
+
         new_node = grand_parent;
     }
 
@@ -243,14 +270,19 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
             new_node = parent;
             left_rotate(new_node);
             parent = new_node->get_parent();
+            grand_parent = parent->get_parent();
         } else if (!parent_is_left && new_node == parent->get_left()) {
             new_node = parent;
             right_rotate(new_node);
             parent = new_node->get_parent();
+            grand_parent = parent->get_parent();
         }
 
         parent->color_ = Color::black;
         grand_parent->color_ = Color::red;
+
+        update_size(parent);
+        update_size(grand_parent);
 
         if (parent_is_left) {
             right_rotate(grand_parent);
