@@ -144,14 +144,16 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
     }
 
     iterator::difference_type log_distance(iterator first, iterator last) const {
-        if (first == last) return 0;
+        if (first == last)
+            return 0;
 
         return get_rank(last.get()) - get_rank(first.get());
     }
 
-private:
+  private:
     auto get_rank(const Node<KeyT> *node) const {
-        if (node->is_nil()) return root_->size_;
+        if (node->is_nil())
+            return root_->size_;
 
         auto rank = node->get_left()->size_;
         auto current = node;
@@ -167,8 +169,7 @@ private:
         return rank;
     }
 
-    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent,
-                      const KeyT &key) const {
+    bool tree_descent(Node<KeyT> *&current, Node<KeyT> *&parent, const KeyT &key) const {
         while (!current->is_nil()) {
             parent = current;
 
