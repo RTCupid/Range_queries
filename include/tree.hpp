@@ -161,7 +161,7 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
         auto rank = node->get_left()->size_;
         auto current = node;
 
-        while (current->get_parent() != nil_) {
+        while (!current->get_parent()->is_nil()) {
             const auto parent = current->get_parent();
             if (current == parent->get_right()) {
                 rank += 1 + parent->get_left()->size_;
