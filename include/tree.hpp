@@ -121,7 +121,10 @@ template <typename KeyT, typename Compare = std::less<KeyT>> class Tree final {
 
         while (!current->is_nil()) {
             if (comp_(current->get_key(), key))
-                current = current->get_right();
+                if (comp_(current->get_key(), key))
+                    current = current->get_right();
+                else
+                    candidate = std::exchange(current, current->get_left());
             else
                 candidate = std::exchange(current, current->get_left());
         }
