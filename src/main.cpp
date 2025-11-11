@@ -44,7 +44,9 @@ static void driver() {
                 std::size_t result = 0;
 #ifdef TIMING_RUN
                 auto t0 = clock::now();
+#endif
                 result = range_query(tree, fst, snd);
+#ifdef TIMING_RUN
                 asm volatile("" : : "r"(result));
                 auto t1 = clock::now();
                 msf += std::chrono::duration<double, std::milli>(t1 - t0).count();
